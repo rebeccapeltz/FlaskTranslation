@@ -16,3 +16,5 @@ https://learn.microsoft.com/en-us/python/api/overview/azure/ai-translation-text-
 az cognitiveservices account keys list --resource-group <your-resource-group-name> --name <your-resource-name>
 
 az cognitiveservices account keys list --resource-group TranslatorAI --name bplangtrans
+
+deploy: az webapp up --runtime PYTHON:3.13 --sku F1 --logs
