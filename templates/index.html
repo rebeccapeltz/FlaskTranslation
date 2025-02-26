@@ -2,25 +2,55 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-	<title>Azure Text Translator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Azure Text Translator</title>
+    <style>
+        body {
+            background-color: aliceblue;
+        }
+    </style>
 </head>
 
 <body>
-	<div class="container">
-		<h1>Azure Text Translator</h1>
-		<div>Enter text, select language, and click to translate</div>
-		<div>
-			<form method="POST">
-				<div class="form-group">
-					<textarea name="text" cols="20" rows="10"
-							class="form-control"></textarea>
-				</div>
-				<div class="form-group">
+    <div class="container">
+        <h1>Azure Text Translator</h1>
+        <div>Choose language, enter text, and click to translate</div>
+        <div>
+
+            <form id="myForm" method="POST">
+                <div class="btn-group mt-3 mb-3 flex-wrap" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" value="en" class="btn-check" name="language" id="btnradio1" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="btnradio1">English</label>
+
+                    <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio2">French</label>
+
+                    <input type="radio" value="de" class="btn-check" name="language" id="btnradio3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio3">German</label>
+
+                    <input type="radio" value="it" class="btn-check" name="language" id="btnradio4" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
+
+                    <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
+
+                    <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
+
+                    <input type="radio" value="es" class="btn-check" name="language" id="btnradio7" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
+                </div>
+                <div class="form-group mb-3">
+                    <textarea name="text" cols="20" rows="15" class="form-control"></textarea>
+                </div>
+
+                <!-- <div class="form-group">
 					<label for="language">Select language:</label>
-					<select name="language" id="language" class="form-control">
+					<select name="language" class="form-control">
 						<option value="en">English</option>
 						<option value="fr">French</option>
 						<option value="de">German</option>
@@ -29,13 +59,14 @@
 						<option value="ru">Russian</option>
 						<option value="es">Spanish</option>
 					</select>
-				</div>
-				<div>
-					<button type="submit" class="btn btn-success">Translate</button>
-				</div>
-			</form>
-		</div>
-	</div>
+				</div> -->
+                <div>
+                    <button type="submit" class="btn btn-primary">Translate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 
 </html>

@@ -18,16 +18,16 @@ def index_get():
 def index_post():
 	# Read the values from the form
 	text_to_translate = request.form['text']
-	target_language = request.form['language']
+	if 'language' not in request.form:
+		print('Error: language not found')
+	print('before target language')
+	target_language = request.form.get('language')
+	print('target language',target_language)
 
 	# Load the values from .env
-	key = os.getenv("TRANSLATOR_KEY")
-	endpoint = os.getenv("TEXT_TRANSLATION_ENDPOINT")
-	region = os.getenv('LOCATION')
-
-
-	# key = "DnZJORsUuBJHHwh9V6KJBZStw85uxc7RZ47F2AC1SkT2SKVgiP4QJQQJ99BBAC8vTInXJ3w3AAAbACOGskZg"
-	# endpoint = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0"
+	key = os.environ.get("TRANSLATOR_KEY")
+	endpoint = os.environ.get("TEXT_TRANSLATION_ENDPOINT")
+	region = os.environ.get('LOCATION')
 
 	# Construct the request headers and body
 	headers = {
@@ -43,9 +43,17 @@ def index_post():
 	try:
 		# Make the request
 		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language})
-		translations = response.json()
-		translated_text = translations[0]['translations'][0]['text']
+		json_response = response.json()
+		print(json_response)
+		translated_text = json_response[0]['translations'][0]['text']
 		print(f"Translated text: {translated_text}")
+
+		detected_language = json_response[0].detectedLanguage.language
+		print('after detected language')
+		print(f'detected_language: {detected_language}')
+		detected_language_score = json_response[0].detectedLanguage.score
+		print(f'detected_language_score {detected_language_score}')
+
 
 		# Call render template, passing the translated text,
 		# original text, and target language to the template
@@ -53,54 +61,14 @@ def index_post():
 		'results.html',
 			translated_text=translated_text,
 			text_to_translate=text_to_translate,
-			target_language=target_language
+			target_language=target_language,
+			detected_language=detected_language,
+			detected_language_score=detected_language_score
 		)
 	except HTTPError as exception:
 		if exception.error is not None:
 			print(f"Error Code: {exception.error.code}")
 			print(f"Message: {exception.error.message}")
-
-	# Indicate that we want to translate and the API
-	# version (3.0) and the target language
-	# path = '/translate?api-version=3.0'
-	#
-	# Add the target language parameter
-	# target_language_parameter = '&to=' + target_language
-
-	# Create the full URL
-	# constructed_url = endpoint + path + target_language_parameter
-
-	# Set up the header information, which includes our
-	# subscription key
-	# headers = {
-	# 	'Ocp-Apim-Subscription-Key': key,
-	# 	'Ocp-Apim-Subscription-Region': location,
-	# 	'Content-type': 'application/json',
-	# 	'X-ClientTraceId': str(uuid.uuid4())
-	# }
-
-	# Create the body of the request with the text to be
-	# translated
-	# body = [{'Text': original_text}]
-
-	# Make the call using post
-	# translator_request = request.post(
-	# 	constructed_url, headers=headers, json=body)
-
-	# Retrieve the JSON response
-	# translator_response = translator_request.json()
-
-	# Retrieve the translation
-	# translated_text = translator_response[0]['translations'][0]['text']
-
-	# Call render template, passing the translated text,
-	# original text, and target language to the template
-	# return render_template(
-	# 	'results.html',
-	# 	translated_text=translated_text,
-	# 	original_text=original_text,
-	# 	target_language=target_language
-	# )
 
 @app.route("/", methods=["GET","POST"])
 def index():
@@ -113,33 +81,15 @@ def index():
 
 		# Load the values from .env
 		key = os.getenv("TRANSLATOR_KEY")
-		# print(key)
 		endpoint = os.getenv("TEXT_TRANSLATION_ENDPOINT")
-		print(endpoint)
 		location = os.getenv('LOCATION')
-		print(location)
 
-		# Indicate that we want to translate and the API
-		# version (3.0) and the target language
-		# path = 'translate?api-version=3.0'
-
-		# Add the target language parameter
-		#target_language_parameter \
-		#	= '&from=en&to=' + target_language
-
-		# Create the full URL
-		# constructed_url = endpoint + path + target_language_parameter
-		# print('constructed_url',constructed_url)
-
-		# Set up the header information, which includes our
-		# subscription key
+		# Set up the header information
 		headers = {
 			'Ocp-Apim-Subscription-Key': key,
 			'Ocp-Apim-Subscription-Region': location,
 			'Content-type': 'application/json'
 		}
-
-		# print('headers',headers)
 
 		# Create the body of the request with the text to be
 		# translated
@@ -149,20 +99,26 @@ def index():
 		# Make the call using post
 		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language})
 
-		# response = requests.post(endpoint, headers=headers, \
-		# 			 json=body, params={"to": target_language})
-
 		# Check the response
 		if response.status_code == 200:
-			translations = response.json()
-			print(translations)
-			translated_text = translations[0]['translations'][0]['text']
+			json_response = response.json()
+
+			print(json_response)
+
+			translated_text = json_response[0]['translations'][0]['text']
 			print(f"Translated text: {translated_text}")
+
+			detected_language = json_response[0]['detectedLanguage']['language']
+			detected_language_score = json_response[0]['detectedLanguage']['score']
+			print(detected_language, detected_language_score)
+
 			return render_template(
 				'results.html',
 				translated_text=translated_text,
 				text_to_translate=text_to_translate,
-				target_language=target_language
+				target_language=target_language,
+				detected_language=detected_language,
+				detected_language_score=detected_language_score
 			)
 		else:
 			print(f"Error Code: {response.status_code}")
