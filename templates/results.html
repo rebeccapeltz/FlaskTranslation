@@ -11,6 +11,9 @@
         body {
             background-color: aliceblue;
         }
+        #speakOriginal, #speakTranslated {
+            display: block;
+        }
     </style>
 </head>
 
@@ -21,11 +24,11 @@
 
     <div class="mt-3 mb-3">
         <div class="mt-3 mb-3">
-            <strong>Original language code:</strong> <span id="originalLanguageCode">{{ detected_language_code }}</span>  <span id="originalLanguage">{{ detected_language }}</span>
+            <strong>Original language code:</strong> <span id="originalLanguageCode">{{ detected_language_code }}</span>
+            <span id="originalLanguage">{{ detected_language }}</span>
         </div>
         <strong>Original text:</strong>
         <p id="originalText">{{ text_to_translate }}</p>
-<!--        <p id="originalText">ciao</p>-->
         <div>
             <button id="speakOriginal" type="button" class="btn btn-primary">Speak</button>
         </div>
@@ -33,12 +36,11 @@
     </div>
     <div class="mt-3 mb-3">
         <div class="mt-3 mb-3">
-            <strong>Translated language code:</strong> <span id="targetLanguageCode">{{ target_language_code }}</span> <span id="targetLanguage">{{ target_language }}</span>
+            <strong>Translated language code:</strong> <span id="targetLanguageCode">{{ target_language_code }}</span>
+            <span id="targetLanguage">{{ target_language }}</span>
         </div>
         <strong>Translated text:</strong>
         <p id="translatedText">{{ translated_text }}</p>
-<!--        <p id="translatedText">hello</p>-->
-
         <div>
             <button id="speakTranslated" type="button" class="btn btn-primary">Speak</button>
         </div>
@@ -49,50 +51,10 @@
         <a href="{{ url_for('index') }}">Try another one!</a>
     </div>
 </div>
-<script>
-    const speakOriginalBtn = document.querySelector('#speakOriginal');
-    const speakTranslatedBtn = document.querySelector('#speakTranslated');
-    let originalLanguage = document.querySelector('#originalLanguageCode').textContent;
-    let targetLanguage = document.querySelector('#targetLanguageCode').textContent;
-    let originalText = document.querySelector('#originalText').textContent;
-    let translatedText = document.querySelector('#translatedText').textContent;
 
-    const synth = window.speechSynthesis;
+<script src="{{ url_for('static', filename='js/speech.js', v=now()) }}"></script>
+<script src="{{ url_for('static', filename='js/results.js', v=now()) }}"></script>
 
-    function selectVoiceByCountry(voices, countryCode) {
-        // get first voice that starts with country code
-        const filteredVoices = voices.filter(voice => voice.lang.startsWith(countryCode));
-        return filteredVoices[0];
-    }
-    function speak(text, voice) {
-        if (synth.speaking) {
-            console.error("speechSynthesis.speaking");
-            return;
-        }
-
-        if (text !== "") {
-            const utterThis = new SpeechSynthesisUtterance(text);
-            utterThis.voice = voice;
-            synth.speak(utterThis);
-        }
-    }
-    synth.addEventListener("voiceschanged", () => {
-        var voices = synth.getVoices();
-
-        speakOriginalBtn.addEventListener('click', () => {
-            let voice = selectVoiceByCountry(voices,originalLanguage)
-            speak(originalText, voice);
-        })
-
-        speakTranslatedBtn.addEventListener('click', () => {
-            let voice = selectVoiceByCountry(voices,targetLanguage)
-            speak(translatedText, voice);
-        })
-
-    });
-
-
-</script>
 </body>
 
 </html>

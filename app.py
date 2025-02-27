@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import requests
+import time
 
 # Importing the required libraries
 import os
@@ -10,9 +11,14 @@ from requests import HTTPError
 
 load_dotenv()
 
+app = Flask(__name__)
+
 languages = {"en":"English","fr":"French","de":"German","it":"Italian","ja":"Japanese","ru":"Russian","es":"Spanish"}
 
-app = Flask(__name__)
+
+@app.context_processor
+def inject_now():
+    return {'now': lambda: str(int(time.time()))}
 
 def index_get():
     return render_template('index.html')

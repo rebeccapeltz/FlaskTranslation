@@ -1,8 +1,11 @@
 .env
 __pycache__/
 chatgpt*
-working_code*
+chatgptCode/working_code.py
 test*
-versions*
+chatgptCode/versions.py
 .idea/
 .idea_sav/
+deploy/
+chatgptCode/
+.DS_Store
