@@ -10,6 +10,8 @@ from requests import HTTPError
 
 load_dotenv()
 
+languages = {"en":"English","fr":"French","de":"German","it":"Italian","ja":"Japanese","ru":"Russian","es":"Spanish"}
+
 app = Flask(__name__)
 
 def index_get():
@@ -21,8 +23,8 @@ def index_post():
 	if 'language' not in request.form:
 		print('Error: language not found')
 	print('before target language')
-	target_language = request.form.get('language')
-	print('target language',target_language)
+	target_language_code = request.form.get('language')
+	print('target language',target_language_code)
 
 	# Load the values from .env
 	key = os.environ.get("TRANSLATOR_KEY")
@@ -42,7 +44,7 @@ def index_post():
 
 	try:
 		# Make the request
-		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language})
+		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
 		json_response = response.json()
 		print(json_response)
 		translated_text = json_response[0]['translations'][0]['text']
@@ -61,7 +63,7 @@ def index_post():
 		'results.html',
 			translated_text=translated_text,
 			text_to_translate=text_to_translate,
-			target_language=target_language,
+			target_language_code=target_language_code,
 			detected_language=detected_language,
 			detected_language_score=detected_language_score
 		)
@@ -76,8 +78,8 @@ def index():
 		# Read the values from the form
 		text_to_translate = request.form['text']
 		print(text_to_translate)
-		target_language = request.form['language']
-		print(target_language)
+		target_language_code = request.form['language']
+		print(target_language_code)
 
 		# Load the values from .env
 		key = os.getenv("TRANSLATOR_KEY")
@@ -97,7 +99,7 @@ def index():
 		# print('body', body)
 
 		# Make the call using post
-		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language})
+		response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
 
 		# Check the response
 		if response.status_code == 200:
@@ -108,16 +110,18 @@ def index():
 			translated_text = json_response[0]['translations'][0]['text']
 			print(f"Translated text: {translated_text}")
 
-			detected_language = json_response[0]['detectedLanguage']['language']
+			detected_language_code = json_response[0]['detectedLanguage']['language']
 			detected_language_score = json_response[0]['detectedLanguage']['score']
-			print(detected_language, detected_language_score)
+			print(detected_language_code, detected_language_score)
 
 			return render_template(
 				'results.html',
 				translated_text=translated_text,
 				text_to_translate=text_to_translate,
-				target_language=target_language,
-				detected_language=detected_language,
+				target_language_code=target_language_code,
+				detected_language_code=detected_language_code,
+				target_language=languages[target_language_code],
+				detected_language=languages[detected_language_code],
 				detected_language_score=detected_language_score
 			)
 		else:
