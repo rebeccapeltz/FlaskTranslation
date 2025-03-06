@@ -11,7 +11,9 @@
         body {
             background-color: aliceblue;
         }
-        #speakOriginal, #speakTranslated {
+
+        #speakOriginal,
+        #speakTranslated {
             display: block;
         }
     </style>
@@ -19,42 +21,62 @@
 
 <body>
 <div class="container">
-    <h2>Results</h2>
-
+    <h1>Results</h1>
 
     <div class="mt-3 mb-3">
-        <div class="mt-3 mb-3">
-            <strong>Original language code:</strong> <span id="originalLanguageCode">{{ detected_language_code }}</span>
-            <span id="originalLanguage">{{ detected_language }}</span>
-        </div>
-        <strong>Original text:</strong>
-        <p id="originalText">{{ text_to_translate }}</p>
-        <div>
-            <button id="speakOriginal" type="button" class="btn btn-primary">Speak</button>
-        </div>
-
-    </div>
-    <div class="mt-3 mb-3">
-        <div class="mt-3 mb-3">
-            <strong>Translated language code:</strong> <span id="targetLanguageCode">{{ target_language_code }}</span>
-            <span id="targetLanguage">{{ target_language }}</span>
-        </div>
-        <strong>Translated text:</strong>
-        <p id="translatedText">{{ translated_text }}</p>
-        <div>
-            <button id="speakTranslated" type="button" class="btn btn-primary">Speak</button>
-        </div>
+        <audio controls id="audio"></audio>
     </div>
 
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Original Text</h5>
+                    <div class="mt-1 mb-1">
+                        <strong>Original language code:</strong>
+
+                        <span id="originalLanguage">{{ detected_language }}</span>
+                        (<span id="originalLanguageCode">{{detected_language_code}}</span>)
+                    </div>
+                    <div>
+                        <strong>Original text:</strong>
+                        <p id="originalText">{{ text_to_translate }}</p>
+                    </div>
+
+                    <div>
+                        <button id="speakOriginal" type="button" class="btn btn-primary">Speak Original</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Translated Text</h5>
+                    <div class="mt-1 mb-1">
+                        <strong>Translated language:</strong>
+                        <span id="targetLanguage">{{ target_language }}
+                            ( <span id="targetLanguageCode">{{target_language_code}}</span>)</span>
+                    </div>
+                    <div>
+                        <strong>Tranlated text:</strong>
+                        <p id="translatedText">{{ translated_text }}
+                    </div>
+
+                    <div>
+                        <button id="speakTranslated" type="button" class="btn btn-primary">Speak Translated</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="mt-3 mb-3">
-        <a href="{{ url_for('index') }}">Try another one!</a>
+        <a href="{{ url_for('index') }}">More Translations -></a>
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/speech.js', v=now()) }}"></script>
-<script src="{{ url_for('static', filename='js/results.js', v=now()) }}"></script>
-
+<script src="{{ url_for('static', filename='js/azspeech.js', v=now()) }}"></script>
 </body>
 
 </html>

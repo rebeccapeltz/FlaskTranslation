@@ -99,21 +99,21 @@ if ("speechSynthesis" in window) {
   // window.speechSynthesis.addEventListener("voiceschanged", () => {
   //     var voices = window.speechSynthesis.getVoices();
 
-  speakOriginalBtn.addEventListener("click", () => {
+//  speakOriginalBtn.addEventListener("click", () => {
     // console.log(voices)
     //   voices = window.speechSynthesis.getVoices();
-    debugger;
+//    debugger;
 
-    let voice = selectVoice(voiceList, originalLanguage);
-    speak(originalText, voice);
-  });
+//    let voice = selectVoice(voiceList, originalLanguage);
+//    speak(originalText, voice);
+//  });
 
   speakTranslatedBtn.addEventListener("click", () => {
     // console.log(voices)
     //   voices = window.speechSynthesis.getVoices();
-    debugger
+//    debugger
     let voice = selectVoice(voiceList, targetLanguage);
-    debugger;
+//    debugger;
     speak(translatedText, voice);
   });
 }
