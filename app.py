@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, jsonify, Response
+import traceback
 import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
+import base64
+from io import BytesIO
 
 # Importing the required libraries
 import os
@@ -38,9 +41,7 @@ def index_post():
     text_to_translate = request.form['text']
     if 'language' not in request.form:
         print('Error: language not found')
-    print('before target language')
     target_language_code = request.form.get('language')
-    print('target language', target_language_code)
 
     # Construct the request headers and body
     headers = {
@@ -57,19 +58,14 @@ def index_post():
         # Make the request
         response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
         json_response = response.json()
-        print("json response", json_response)
-
-        print("json response 0", json_response[0])
-        print("json response 1", json_response[1])
-
         translated_text = json_response[0]['translations'][0]['text']
-        print(f"Translated text: {translated_text}")
-        print(f"Detected language: ", json_response[0])
+        # print(f"Translated text: {translated_text}")
+        # print(f"Detected language: ", json_response[0])
         detected_language = json_response[0].detectedLanguage.language
-        print('after detected language')
-        print(f'detected_language: {detected_language}')
+        # print('after detected language')
+        # print(f'detected_language: {detected_language}')
         detected_language_score = json_response[0].detectedLanguage.score
-        print(f'detected_language_score {detected_language_score}')
+        # print(f'detected_language_score {detected_language_score}')
 
         # Call render template, passing the translated text,
         # original text, and target language to the template
@@ -92,9 +88,9 @@ def index():
     if request.method == 'POST':
         # Read the values from the form
         text_to_translate = request.form['text']
-        print(text_to_translate)
+        # print(text_to_translate)
         target_language_code = request.form['language']
-        print(target_language_code)
+        # print(target_language_code)
 
         # Load the values from .env
         key = os.getenv("TRANSLATOR_KEY")
@@ -111,7 +107,7 @@ def index():
         # Create the body of the request with the text to be
         # translated
         body = [{'text': text_to_translate}]
-        print('body', body)
+        # print('body', body)
 
         # Make the call using post
         response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
@@ -120,14 +116,14 @@ def index():
         if response.status_code == 200:
             json_response = response.json()
 
-            print(json_response)
+            # print(json_response)
 
             translated_text = json_response[0]['translations'][0]['text']
-            print(f"Translated text: {translated_text}")
+            # print(f"Translated text: {translated_text}")
 
             detected_language_code = json_response[0]['detectedLanguage']['language']
             detected_language_score = json_response[0]['detectedLanguage']['score']
-            print("detected", detected_language_code, detected_language_score)
+            # print("detected", detected_language_code, detected_language_score)
 
             return render_template(
                 'results.html',
@@ -146,58 +142,67 @@ def index():
         return render_template('index.html')
 
 
-def generate_speech(text, language):
-    region = os.environ.get('LOCATION')
-    speechKey = os.environ.get('SPEECH_KEY')
-    speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
-    speech_config.speech_synthesis_voice_name = language
+import os
+import azure.cognitiveservices.speech as speechsdk
+from io import BytesIO
+
+def generate_speech_from_text(text,voice):
+    speech_config = speechsdk.SpeechConfig(
+        subscription=speechKey,
+        region=region
+    )
+    speech_config.speech_synthesis_voice_name = voice # "en-US-JennyNeural"
+    speech_config.set_speech_synthesis_output_format(
+        speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+    )
+    
     synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
-
     result = synthesizer.speak_text_async(text).get()
+    
     if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        audio_filename = "output.wav"
-        with open(audio_filename, "wb") as audio_file:
-            audio_file.write(result.audio_data)
-        return audio_filename
+        return BytesIO(result.audio_data)
     else:
-        raise Exception("Speech synthesis failed")
+        raise Exception(f"Speech synthesis failed: {result.error_details}")
 
-
-@app.route('/synthesize', methods=['POST'])
+@app.route("/synthesize", methods=["GET"])
 def synthesize():
-    data = request.json
-    text = data['text']
-    language = data['language']
-    try:
-        audio_filename = generate_speech(text, language)
-        return send_file(audio_filename, as_attachment=True, mimetype="audio/wav")
-    except Exception as e:
-        return str(e), 500
-
-
+    # print("in textToSpeech")
+    text_works = request.args.get('text')
+    voice = request.args.get('voice')
+    if text_works:
+        try:
+            audio_stream = generate_speech_from_text(text_works,voice)
+            return Response(audio_stream.getvalue(), mimetype="audio/mpeg")
+        except Exception as err:
+            print(err)
+            return "Error in text-to-speech synthesis", 500
+    else:
+        return "Text not provided", 404
+       
 @app.route('/start_recognition', methods=['GET'])
 def start_recognition():
-    print("start recognition")
+    # print("start recognition")
     language_code = request.args.get("language_code")
-    print("language code:", language_code)
+    # print("language code:", language_code)
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
     source_language_config = speechsdk.languageconfig.SourceLanguageConfig(language_code)
     audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
+    
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config,
                                                    source_language_config=source_language_config,
                                                    audio_config=audio_config)
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
-    print("speech result", speech_recognition_result)
-    print("result text", speech_recognition_result.text)
+    # print("speech result", speech_recognition_result)
+    # print("result text", speech_recognition_result.text)
 
     if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        print("RecognizedSpeech")
+        # print("RecognizedSpeech")
         return jsonify({'text': speech_recognition_result.text})
     elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
-        print("No Match")
+        # print("No Match")
         return jsonify({'text': 'No speech could be recognized'})
     else:
-        print("Cancelled")
+        # print("Cancelled")
         return jsonify({'text': 'Speech recognition canceled'})
 
 

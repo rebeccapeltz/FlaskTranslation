@@ -33,4 +33,7 @@ https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-s
 resource group: 
 text to speech supported languages
 https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts
-I'm running the text to speech service and trying to get it speak an short text string using this voice: it-IT-ElsaNeural.  I'm getting this error:  Codec decoding is not started within 2s. 
+I'm running the text to speech service and trying to get it speak an short text string using this voice: it-IT-ElsaNeural.  I'm getting this error:  Codec decoding is not started within 2s.
+
+speech synthesis types:
+https://learn.microsoft.com/en-us/dotnet/api/microsoft.cognitiveservices.speech.speechsynthesisoutputformat?view=azure-dotnet

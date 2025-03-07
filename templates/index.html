@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>Azure Text Translator</title>
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Babel Ease</title>
     <style>
         body {
             background-color: aliceblue;
         }
+
         .background {
             background-color: aliceblue;
         }
@@ -18,157 +19,133 @@
 </head>
 
 <body>
-<div class="container">
-    <!--    <h1>Babel Ease</h1>-->
-
-    <div class="d-flex justify-content-center m-3">
-<!--        <div class="card col-6 background" style="width: 12rem;">-->
-<!--            <div class="card-body">-->
-<!--                <p class="card-text text-center mt-3">It was difficult to build the Tower of Babel because the builders-->
-<!--                    spoke </p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="card col-6" style="width: 12rem;">-->
-<!--            <img class="card-img-top" src="{{url_for('static', filename='images/babel-no-understand.png')}}"-->
-<!--                 alt="Card image cap">-->
-<!--        </div>-->
-        <div class="card col-6 background" style="width: 12rem;">
-            <div class="card-body">
-                <h2 class="card-text">Babel Ease</h2>
-                <p class="mt-3">A tool to help people that speak different languages understand each other.</p>
+    <div class="container">
+        <div class="d-flex justify-content-center m-3">
+            <div class="card col-6 background">
+                <div class="card-body">
+                    <h2 class="card-text">Babel Ease</h2>
+                    <p class="mt-3 fs-3">A tool designed to bridge language barriers.</p>
+                </div>
             </div>
-        </div>
-        <div class="card col-6" style="width: 12rem;">
-            <img class="card-img-top" src="{{url_for('static', filename='images/babel-understand.png')}}"
-                 alt="Card image cap">
-        </div>
-<!--        <div class="card col-6 background" style="width: 12rem;">-->
-<!--            <div class="card-body">-->
-<!--                <p class="card-text mt-3">The tower could be built if there was a way to understant other languages.</p>-->
-<!--            </div>-->
-<!--        </div>-->
-    </div>
-
-
-    <form id="myForm" method="POST">
-        <h4 class="text-center">Text to Translate</h4>
-        <div class="text-center">
-            <div class="form-group">
-                    <textarea placeholder="Type text here or use speech recognition below to add text" name="text"
-                              id="input_text" cols="15" rows="3" class="form-control"></textarea>
+            <div class="card col-2">
+                <div class="mx-auto">
+                    <img class="card-img-top" style="width:12rem"
+                        src="{{url_for('static', filename='images/babel-no-understand.png')}}" alt="Card image cap">
+                </div>
             </div>
-        </div>
-        <div class="m-3"><span class="fw-bold">Speech Recognition</span></div>
-
-        <div class="border border-dark m-3">
-
-            <!-- speech recognition-->
-            <div class="m-3">
-                <div class="row">
-                    <div class="input-group col">
-                        <select id="speechLanguageSelect" class="form-select">
-                            <option value="none" selected>Language</option>
-                            <option value="ar-SA">Arab</option>
-                            <option value="zh-CN">Chinese</option>
-                            <option value="en-US">English</option>
-                            <option value="fr-FR">French</option>
-                            <option value="de-DE">German</option>
-                            <option value="he-IL">Hebrew</option>
-                            <option value="hi-IN">Hindi</option>
-                            <option value="it-IT">Italian</option>
-                            <option value="ja-JP">Japnaese</option>
-                            <option value="ru-RU">Russian</option>
-                            <option value="es-MX">Spanish</option>
-                            <option value="uk-UA">Ukaraine</option>
-                            <option value="zu-ZA">Zulu</option>
-                        </select>
-                    </div>
-                    <div class="input-group-append col">
-                        <button id="speakInput" onclick="startRecognition()" class="btn btn-primary">
-                            Click to speak in chosen language
-                        </button>
-                    </div>
+            <div class="card col-2">
+                <div class="mx-auto">
+                    <img class="card-img-top" style="width:12rem"
+                        src="{{url_for('static', filename='images/right-arrow.png')}}" alt="Card image cap">
+                </div>
+            </div>
+            <div class="card col-2">
+                <div class="mx-auto">
+                    <img class="card-img-top" style="width:12rem"
+                        src="{{url_for('static', filename='images/babel-understand.png')}}" alt="Card image cap">
                 </div>
             </div>
         </div>
 
-        <h4 class="text-center mt-3">Translation Language</h4>
-        <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span></div>
 
-        <div class="border border-dark text-center m-3">
-            <div class="btn-group flex-wrap m-3" role="group"
-                 aria-label="Language to translate to">
-
-                <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio0">Arab</label>
-
-                <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio9">Chinese</label>
-
-                <input type="radio" value="en" class="btn-check" name="language" id="btnradio1"
-                       autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="btnradio1">English</label>
-
-                <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio2">French</label>
-
-                <input type="radio" value="de" class="btn-check" name="language" id="btnradio3"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio3">German</label>
-
-                <input type="radio" value="he" class="btn-check" name="language" id="btnradio02"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio02">Hebrew</label>
-
-                <input type="radio" value="hi" class="btn-check" name="language" id="btnradio01"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio01">Hindi</label>
-
-                <input type="radio" value="it" class="btn-check" name="language" id="btnradio4"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
-
-                <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
-
-                <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
-
-                <input type="radio" value="es" class="btn-check" name="language" id="btnradio7"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
-
-                <input type="radio" value="uk" class="btn-check" name="language" id="btnradio8"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio8">Ukrainian</label>
-
-                <input type="radio" value="zu" class="btn-check" name="language" id="btnradio03"
-                       autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio03">Zulu</label>
+        <form id="myForm" method="POST">
+            <h4 class="text-center">Text to Translate</h4>
+            <div class="text-center">
+                <div class="form-group">
+                    <textarea placeholder="Type text here or use speech recognition below to add text" name="text"
+                        id="input_text" cols="15" rows="3" class="form-control"></textarea>
+                </div>
             </div>
-        </div>
+            <div class="m-3"><span class="fw-bold">Speech Recognition</span></div>
+
+            <div class="border border-dark m-3">
+
+                <!-- speech recognition-->
+                <div class="m-3">
+                    <div class="row">
+                        <div class="input-group col">
+                            <select id="speechLanguageSelect" class="form-select">
+                                <option value="none" selected>Select a language</option>
+                                <option value="ar-SA">Arab</option>
+                                <option value="zh-CN">Chinese</option>
+                                <option value="en-US">English</option>
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="he-IL">Hebrew</option>
+                                <option value="hi-IN">Hindi</option>
+                                <option value="it-IT">Italian</option>
+                                <option value="ja-JP">Japnaese</option>
+                                <option value="ru-RU">Russian</option>
+                                <option value="es-MX">Spanish</option>
+                                <option value="uk-UA">Ukaraine</option>
+                                <option value="zu-ZA">Zulu</option>
+                            </select>
+                        </div>
+                        <div class="input-group-append col">
+                            <button disabled id="speakInput" onclick="startRecognition()" class="btn btn-primary">
+                                Click to speak in chosen language
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="text-center mt-3">Translation Language</h4>
+            <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span></div>
+
+            <div class="border border-dark text-center m-3">
+                <div class="btn-group flex-wrap m-3" role="group" aria-label="Language to translate to">
+
+                    <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio0">Arab</label>
+
+                    <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio9">Chinese</label>
+
+                    <input type="radio" value="en" class="btn-check" name="language" id="btnradio1" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="btnradio1">English</label>
+
+                    <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio2">French</label>
+
+                    <input type="radio" value="de" class="btn-check" name="language" id="btnradio3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio3">German</label>
+
+                    <input type="radio" value="he" class="btn-check" name="language" id="btnradio02" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio02">Hebrew</label>
+
+                    <input type="radio" value="hi" class="btn-check" name="language" id="btnradio01" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio01">Hindi</label>
+
+                    <input type="radio" value="it" class="btn-check" name="language" id="btnradio4" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
+
+                    <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
+
+                    <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
+
+                    <input type="radio" value="es" class="btn-check" name="language" id="btnradio7" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
+
+                    <input type="radio" value="uk" class="btn-check" name="language" id="btnradio8" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio8">Ukrainian</label>
+
+                    <input type="radio" value="zu" class="btn-check" name="language" id="btnradio03" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio03">Zulu</label>
+                </div>
+            </div>
 
 
-        <div class="m-3 text-end">
-            <button type="submit" class="btn btn-lg btn-primary">Translate</button>
-        </div>
+            <div class="m-3 text-end">
+                <button type="submit" class="btn btn-lg btn-primary">Translate</button>
+            </div>
 
-    </form>
-</div>
-<script src="{{ url_for('static', filename='js/speechRecognition.js', v=now()) }}"></script>
-
-<!--<script>-->
-<!--    languages = {"ar": "Arab", "zh": "Chinese",-->
-<!--    "en": "English", "fr": "French", "de": "German",-->
-<!--    "he": "Hebrew","it": "Italian", "ja": "Japanese", "ru": "Russian",-->
-<!--    "es": "Spanish", "uk": "Ukraine", "zu": "Zulu", "hi": "Hindi"};-->
-<!--    console.log(languages);-->
-<!--</script>-->
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/speechRecognition.js', v=now()) }}"></script>
 
 </body>
 
