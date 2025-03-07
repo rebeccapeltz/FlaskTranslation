@@ -1,22 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // console.log('dom content loaded')
   document.querySelector("#speakInput").addEventListener("click", (event) => {
+    if (event) event.preventDefault();
     startRecognition(event);
   });
 });
 
 function startRecognition(event) {
-  if (event) {
-    // Prevent default form submission or other default behavior
-    event.preventDefault();
-  } else {
-    console.log("Event object is null");
-  }
-
   let languageCodeSelect = document.querySelector("#speechLanguageSelect");
   let languageCode =
     languageCodeSelect.options[languageCodeSelect.selectedIndex].value;
   let apiCall = "/start_recognition?language_code=" + languageCode;
-
+  
   fetch(apiCall)
     .then((response) => response.json())
     .then((data) => {
