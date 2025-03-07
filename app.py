@@ -172,7 +172,7 @@ def synthesize():
     if text_works:
         try:
             audio_stream = generate_speech_from_text(text_works,voice)
-            return Response(audio_stream.getvalue(), mimetype="audio/mpeg")
+            return Response(audio_stream.getvalue(), mimetype="audio/wav")
         except Exception as err:
             print(err)
             return "Error in text-to-speech synthesis", 500
