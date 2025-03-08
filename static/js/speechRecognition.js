@@ -7,10 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function startRecognition(event) {
-  let languageCodeSelect = document.querySelector("#speechLanguageSelect");
-  let languageCode =
-    languageCodeSelect.options[languageCodeSelect.selectedIndex].value;
-  let apiCall = "/start_recognition?language_code=" + languageCode;
+  // let languageCodeSelect = document.querySelector("#speechLanguageSelect");
+  // let languageCode =
+  //   languageCodeSelect.options[languageCodeSelect.selectedIndex].value;
+  // let apiCall = "/start_recognition?language_code=" + languageCode;
+  let apiCall = "/start_recognition";
   
   fetch(apiCall)
     .then((response) => response.json())

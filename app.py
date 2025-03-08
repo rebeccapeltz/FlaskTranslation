@@ -3,7 +3,6 @@ import traceback
 import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
-import base64
 from io import BytesIO
 
 # Importing the required libraries
@@ -142,27 +141,34 @@ def index():
         return render_template('index.html')
 
 
-import os
-import azure.cognitiveservices.speech as speechsdk
-from io import BytesIO
+
 
 def generate_speech_from_text(text,voice):
     speech_config = speechsdk.SpeechConfig(
         subscription=speechKey,
         region=region
     )
-    speech_config.speech_synthesis_voice_name = voice # "en-US-JennyNeural"
-    speech_config.set_speech_synthesis_output_format(
-        speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
-    )
+    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
+    speech_config.speech_synthesis_voice_name = "en-US-AvaMultilingualNeural" #voice
+    # speech_config.set_speech_synthesis_output_format(
+    #     speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+    # )
     
-    synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
-    result = synthesizer.speak_text_async(text).get()
+    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,audio_config=audio_config)
+    speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
     
-    if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        return BytesIO(result.audio_data)
-    else:
-        raise Exception(f"Speech synthesis failed: {result.error_details}")
+    if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+        # return BytesIO(result.audio_data)
+        print("Speech synthesized for text [{}]".format(text))
+    elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
+        cancellation_details = speech_synthesis_result.cancellation_details
+        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+        if cancellation_details.reason == speechsdk.CancellationReason.Error:
+            if cancellation_details.error_details:
+                print("Error details: {}".format(cancellation_details.error_details))
+                print("Did you set the speech resource key and region values?")
+    # else:
+    #     raise Exception(f"Speech synthesis failed: {result.error_details}")
 
 @app.route("/synthesize", methods=["GET"])
 def synthesize():
@@ -182,19 +188,31 @@ def synthesize():
 @app.route('/start_recognition', methods=['GET'])
 def start_recognition():
     # print("start recognition")
-    language_code = request.args.get("language_code")
-    # print("language code:", language_code)
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
-    source_language_config = speechsdk.languageconfig.SourceLanguageConfig(language_code)
-    audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
-    
-    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config,source_language_config=source_language_config,audio_config=audio_config)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+
+    print("Speak into your microphone.")
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
+    print(speech_recognition_result.text)
+    print(speech_recognition_result.reason)
+
+    ###### old -works locally
+    # language_code = request.args.get("language_code")
+    # print("language code:", language_code)
+    # speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
+    # source_language_config = speechsdk.languageconfig.SourceLanguageConfig(language_code)
+    # audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
+    
+    # speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config,source_language_config=source_language_config,audio_config=audio_config)
+    # speech_recognition_result = speech_recognizer.recognize_once_async().get()
+    #######
+
     # print("speech result", speech_recognition_result)
     # print("result text", speech_recognition_result.text)
 
     if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        # print("RecognizedSpeech")
+        print("RecognizedSpeech")
+        print(speech_recognition_result.text)
         return jsonify({'text': speech_recognition_result.text})
     elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
         # print("No Match")

@@ -51,17 +51,17 @@ const synthesizeSpeech = async (text, voice) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const audioBuffer = await response.arrayBuffer();
-    if (audioBuffer.byteLength > 0) {
-      const audioBlob = new Blob([audioBuffer], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      return audioBlob;
-    } else {
-      console.error("Empty audio response");
-      return null;
-    }
+    // const audioBuffer = await response.arrayBuffer();
+    // if (audioBuffer.byteLength > 0) {
+    //   const audioBlob = new Blob([audioBuffer], { type: "audio/mpeg" });
+    //   const audioUrl = URL.createObjectURL(audioBlob);
+    //   const audio = new Audio(audioUrl);
+    //   audio.play();
+    //   return audioBlob;
+    // } else {
+    //   console.error("Empty audio response");
+    //   return null;
+    // }
   } catch (error) {
     console.error("Error fetching text-to-speech audio:", error);
     return null;
