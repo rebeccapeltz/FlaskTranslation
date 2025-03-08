@@ -1,17 +1,15 @@
 from flask import Flask, render_template, request, jsonify, Response
-import traceback
+# import traceback
 import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
-from io import BytesIO
 import base64
 
 # Importing the required libraries
 import os
 from dotenv import load_dotenv
-from requests import HTTPError
-
 load_dotenv()
+
 # Load the values from .env
 key = os.environ.get("TRANSLATOR_KEY")
 endpoint = os.environ.get("TEXT_TRANSLATION_ENDPOINT")
@@ -35,52 +33,6 @@ def inject_now():
 def index_get():
     return render_template('index.html')
 
-
-def index_post():
-    # Read the values from the form
-    text_to_translate = request.form['text']
-    if 'language' not in request.form:
-        print('Error: language not found')
-    target_language_code = request.form.get('language')
-
-    # Construct the request headers and body
-    headers = {
-        "Ocp-Apim-Subscription-Key": key,
-        "Content-Type": "application/json",
-        "Ocp-Apim-Subscription-Region": region  # Replace with your region, e.g., "westus"
-    }
-
-    body = [{
-        "text": text_to_translate
-    }]
-
-    try:
-        # Make the request
-        response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
-        json_response = response.json()
-        translated_text = json_response[0]['translations'][0]['text']
-        # print(f"Translated text: {translated_text}")
-        # print(f"Detected language: ", json_response[0])
-        detected_language = json_response[0].detectedLanguage.language
-        # print('after detected language')
-        # print(f'detected_language: {detected_language}')
-        detected_language_score = json_response[0].detectedLanguage.score
-        # print(f'detected_language_score {detected_language_score}')
-
-        # Call render template, passing the translated text,
-        # original text, and target language to the template
-        return render_template(
-            'results.html',
-            translated_text=translated_text,
-            text_to_translate=text_to_translate,
-            target_language_code=target_language_code,
-            detected_language=detected_language,
-            detected_language_score=detected_language_score
-        )
-    except HTTPError as exception:
-        if exception.error is not None:
-            print(f"Error Code: {exception.error.code}")
-            print(f"Message: {exception.error.message}")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -159,7 +111,6 @@ def generate_speech_from_text(text,voice):
     speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
     # print("speech_synthesis_result:",speech_synthesis_result)
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        # return BytesIO(result.audio_data)
         print("audio data length:",len(speech_synthesis_result.audio_data))
         # print("audio data first 10 characters:",speech_synthesis_result.audio_data[0,11])
         return speech_synthesis_result.audio_data
