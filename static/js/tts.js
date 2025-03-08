@@ -38,32 +38,57 @@ function getVoice(countryCode) {
   return undefined;
 }
 
-// Fetch TTS from Backend
-const synthesizeSpeech = async (text, voice) => {
-  console.log(text, voice);
-  params = {
-    text: "Ciao",
-    voice: "it-IT-ElsaNeural",
-  };
+async function synthesizeSpeech (text, voice) {
   const urlWithParams = `/synthesize?text=${text}&voice=${voice}`;
+  console.log(urlWithParams)
   try {
-    const response = await fetch(urlWithParams);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    // const audioBuffer = await response.arrayBuffer();
-    // if (audioBuffer.byteLength > 0) {
-    //   const audioBlob = new Blob([audioBuffer], { type: "audio/mpeg" });
-    //   const audioUrl = URL.createObjectURL(audioBlob);
-    //   const audio = new Audio(audioUrl);
-    //   audio.play();
-    //   return audioBlob;
-    // } else {
-    //   console.error("Empty audio response");
-    //   return null;
-    // }
+        const response = await fetch(urlWithParams);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json()
+        const audio = new Audio(`data:${data.contentType};base64,${data.audioData}`);
+        // audio.play()
   } catch (error) {
     console.error("Error fetching text-to-speech audio:", error);
     return null;
   }
-};
+}
+// fetch('/speak?text=Hello, world!')
+//   .then(response => response.json())
+//   .then(data => {
+//     const audio = new Audio(`data:${data.contentType};base64,${data.audioData}`);
+//     audio.play();
+//   });
+
+
+// Fetch TTS from Backend
+// const synthesizeSpeech = async (text, voice) => {
+//   console.log(text, voice);
+//   params = {
+//     text: "Ciao",
+//     voice: "it-IT-ElsaNeural",
+//   };
+//   const urlWithParams = `/synthesize?text=${text}&voice=${voice}`;
+//   try {
+//     const response = await fetch(urlWithParams);
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     // const audioBuffer = await response.arrayBuffer();
+//     // if (audioBuffer.byteLength > 0) {
+//     //   const audioBlob = new Blob([audioBuffer], { type: "audio/mpeg" });
+//     //   const audioUrl = URL.createObjectURL(audioBlob);
+//     //   const audio = new Audio(audioUrl);
+//     //   audio.play();
+//     //   return audioBlob;
+//     // } else {
+//     //   console.error("Empty audio response");
+//     //   return null;
+//     // }
+//   } catch (error) {
+//     console.error("Error fetching text-to-speech audio:", error);
+//     return null;
+//   }
+// };

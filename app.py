@@ -159,31 +159,49 @@ def generate_speech_from_text(text,voice):
     
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         # return BytesIO(result.audio_data)
-        print("Speech synthesized for text [{}]".format(text))
+        return speech_synthesis_result.audio_data
+
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
-        cancellation_details = speech_synthesis_result.cancellation_details
         print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+        cancellation_details = speech_synthesis_result.cancellation_details
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
-            if cancellation_details.error_details:
-                print("Error details: {}".format(cancellation_details.error_details))
-                print("Did you set the speech resource key and region values?")
+            print("Error details: {}".format(cancellation_details.error_details))
+        return None      
+    else:
+        print("Unexpected speech synthesis result: {}".format(speech_synthesis_result.reason))
+        return None
     # else:
     #     raise Exception(f"Speech synthesis failed: {result.error_details}")
 
 @app.route("/synthesize", methods=["GET"])
 def synthesize():
     # print("in textToSpeech")
-    text_works = request.args.get('text')
+    text_to_speak = request.args.get('text')
     voice = request.args.get('voice')
-    if text_works:
-        try:
-            audio_stream = generate_speech_from_text(text_works,voice)
-            return Response(audio_stream.getvalue(), mimetype="audio/wav")
-        except Exception as err:
-            print(err)
-            return "Error in text-to-speech synthesis", 500
+    print(text_to_speak,voice)
+    if not text_to_speak:
+        return jsonify({"error": "Missing 'text' parameter"}), 400
+    # voice = request.args.get('voice')
+    audio_data = generate_speech_from_text(text_to_speak,voice)
+
+    if audio_data:
+        # Convert to base64 for embedding in JSON (or other methods).
+        import base64
+        audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+
+        return jsonify({"audioData": audio_base64, "contentType":"audio/wav"}) #Return the base64 encoded data, and the content type.
     else:
-        return "Text not provided", 404
+        return jsonify({"error": "Speech synthesis failed"}), 500
+
+    # if text_to_speak:
+    #     try:
+    #         audio_stream = generate_speech_from_text(text_to_speak,voice)
+    #         return Response(audio_stream.getvalue(), mimetype="audio/wav")
+    #     except Exception as err:
+    #         print(err)
+    #         return "Error in text-to-speech synthesis", 500
+    # else:
+    #     return "Text not provided", 404
        
 @app.route('/start_recognition', methods=['GET'])
 def start_recognition():
