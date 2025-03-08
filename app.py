@@ -4,6 +4,7 @@ import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
 from io import BytesIO
+import base64
 
 # Importing the required libraries
 import os
@@ -159,12 +160,13 @@ def generate_speech_from_text(text,voice):
     # print("speech_synthesis_result:",speech_synthesis_result)
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         # return BytesIO(result.audio_data)
-        # print("audio data:",speech_synthesis_result.audio_data)
+        print("audio data length:",len(speech_synthesis_result.audio_data))
+        # print("audio data first 10 characters:",speech_synthesis_result.audio_data[0,11])
         return speech_synthesis_result.audio_data
 
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
-        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
         cancellation_details = speech_synthesis_result.cancellation_details
+        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
             print("Error details: {}".format(cancellation_details.error_details))
         return None      
@@ -186,10 +188,9 @@ def synthesize():
     audio_data = generate_speech_from_text(text_to_speak,voice)
     # print('audio_data: ',audio_data)
     if audio_data:
-        # Convert to base64 for embedding in JSON (or other methods).
-        import base64
+        # Convert to base64 for web transport.
         audio_base64 = base64.b64encode(audio_data).decode('utf-8')
-
+        # print("first 10 of base 64", audio_base64[0:11])
         return jsonify({"audioData": audio_base64, "contentType":"audio/wav"}) #Return the base64 encoded data, and the content type.
     else:
         return jsonify({"error": "Speech synthesis failed"}), 500
@@ -212,8 +213,8 @@ def start_recognition():
 
     # print("Speak into your microphone.")
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
-    print(speech_recognition_result.text)
-    print(speech_recognition_result.reason)
+    # print(speech_recognition_result.text)
+    # print(speech_recognition_result.reason)
 
     ###### old -works locally
     # language_code = request.args.get("language_code")
@@ -230,8 +231,8 @@ def start_recognition():
     # print("result text", speech_recognition_result.text)
 
     if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        print("RecognizedSpeech")
-        print(speech_recognition_result.text)
+        # print("RecognizedSpeech")
+        # print(speech_recognition_result.text)
         return jsonify({'text': speech_recognition_result.text})
     elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
         # print("No Match")
