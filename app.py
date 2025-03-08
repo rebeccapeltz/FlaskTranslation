@@ -188,9 +188,7 @@ def start_recognition():
     source_language_config = speechsdk.languageconfig.SourceLanguageConfig(language_code)
     audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
     
-    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config,
-                                                   source_language_config=source_language_config,
-                                                   audio_config=audio_config)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config,source_language_config=source_language_config,audio_config=audio_config)
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
     # print("speech result", speech_recognition_result)
     # print("result text", speech_recognition_result.text)
