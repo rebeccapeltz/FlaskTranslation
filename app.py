@@ -156,9 +156,10 @@ def generate_speech_from_text(text,voice):
     
     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,audio_config=audio_config)
     speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
-    
+    # print("speech_synthesis_result:",speech_synthesis_result)
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         # return BytesIO(result.audio_data)
+        # print("audio data:",speech_synthesis_result.audio_data)
         return speech_synthesis_result.audio_data
 
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
@@ -183,7 +184,7 @@ def synthesize():
         return jsonify({"error": "Missing 'text' parameter"}), 400
     # voice = request.args.get('voice')
     audio_data = generate_speech_from_text(text_to_speak,voice)
-
+    # print('audio_data: ',audio_data)
     if audio_data:
         # Convert to base64 for embedding in JSON (or other methods).
         import base64
@@ -209,7 +210,7 @@ def start_recognition():
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 
-    print("Speak into your microphone.")
+    # print("Speak into your microphone.")
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
     print(speech_recognition_result.text)
     print(speech_recognition_result.reason)
