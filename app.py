@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, jsonify, Response
-# import traceback
+from flask import Flask, render_template, request, jsonify, send_file, Response
+import traceback
 import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
 import base64
+
+import io
+import struct
 
 # Importing the required libraries
 import os
@@ -25,14 +28,14 @@ languages = {"ar": "Arab", "zh": "Chinese", \
              "es": "Spanish", "uk": "Ukraine", "zu": "Zulu", "hi": "Hindi"}
 
 
+# get latest version of html imports
 @app.context_processor
 def inject_now():
     return {'now': lambda: str(int(time.time()))}
 
 
-def index_get():
-    return render_template('index.html')
-
+# def index_get():
+#     return render_template('index.html')
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -96,71 +99,197 @@ def index():
 
 
 
-def generate_speech_from_text(text,voice):
-    speech_config = speechsdk.SpeechConfig(
-        subscription=speechKey,
-        region=region
-    )
-    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
-    speech_config.speech_synthesis_voice_name = "en-US-AvaMultilingualNeural" #voice
-    # speech_config.set_speech_synthesis_output_format(
-    #     speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
-    # )
-    
-    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,audio_config=audio_config)
-    speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
-    # print("speech_synthesis_result:",speech_synthesis_result)
-    if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        print("audio data length:",len(speech_synthesis_result.audio_data))
-        # print("audio data first 10 characters:",speech_synthesis_result.audio_data[0,11])
-        return speech_synthesis_result.audio_data
+# def generate_speech_from_text(text,voice):
+#     speech_config = speechsdk.SpeechConfig(
+#         subscription=speechKey,
+#         region=region
+#     )
 
-    elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
-        cancellation_details = speech_synthesis_result.cancellation_details
-        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
-        if cancellation_details.reason == speechsdk.CancellationReason.Error:
-            print("Error details: {}".format(cancellation_details.error_details))
-        return None      
-    else:
-        print("Unexpected speech synthesis result: {}".format(speech_synthesis_result.reason))
-        return None
-    # else:
-    #     raise Exception(f"Speech synthesis failed: {result.error_details}")
+#     audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
+#     speech_config.speech_synthesis_voice_name = "en-US-AvaMultilingualNeural" #voice
+#     # speech_config.set_speech_synthesis_output_format(
+#     #     speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+#     # )
+    
+#     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,audio_config=audio_config)
+#     speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
+#     # print("speech_synthesis_result:",speech_synthesis_result)
+#     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+#         print("audio data length:",len(speech_synthesis_result.audio_data))
+#         # print("audio data first 10 characters:",speech_synthesis_result.audio_data[0,11])
+#         return speech_synthesis_result.audio_data
+
+#     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
+#         cancellation_details = speech_synthesis_result.cancellation_details
+#         print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+#         if cancellation_details.reason == speechsdk.CancellationReason.Error:
+#             print("Error details: {}".format(cancellation_details.error_details))
+#         return None      
+#     else:
+#         print("Unexpected speech synthesis result: {}".format(speech_synthesis_result.reason))
+#         return None
+#     # else:
+#     #     raise Exception(f"Speech synthesis failed: {result.error_details}")
+
+def is_valid_wav(byte_stream):
+
+    try:
+        # Read the first 12 bytes of the byte stream for header validation
+        byte_stream.seek(0)  # Reset to the beginning of the stream
+        header = byte_stream.read(12)  # Read the RIFF, size, and WAVE parts
+
+        print('first 4 bytes',header[:4]) 
+        print('bytestream 8:12',header[8:12])
+
+        # Check RIFF header
+        if header[:4] != b'RIFF':
+            return False
+        # Check WAVE format
+        if header[8:12] != b'WAVE':
+            return False
+
+        # Additional checks for "fmt " and "data" chunks (optional but recommended)
+        while True:
+            chunk_header = byte_stream.read(8)  # Read chunk header (name + size)
+            if len(chunk_header) < 8:  # End of stream
+                break
+            chunk_name = chunk_header[:4]
+            chunk_size = int.from_bytes(chunk_header[4:], byteorder='little')
+
+            if chunk_name == b'fmt ':
+                fmt_chunk = byte_stream.read(chunk_size)
+                # Add checks for format (e.g., PCM = 1)
+            elif chunk_name == b'data':
+                # Data chunk found - validation complete
+                return True
+            else:
+                # Skip over unknown chunks
+                byte_stream.seek(chunk_size, 1)
+
+        return False
+    except Exception as e:
+        print(f"Error validating WAV stream: {e}")
+        return False
+
+def pcm_to_wav(audio_data, num_channels, sample_rate, bits_per_sample):
+    # Calculate sizes
+    byte_rate = sample_rate * num_channels * bits_per_sample // 8
+    block_align = num_channels * bits_per_sample // 8
+
+    # convert bytesIO to bytes and get data_size
+    audio_data.seek(0)
+    pcm_data = audio_data.read()
+    data_size = len(pcm_data)
+
+    # data_size = len(pcm_data)
+    file_size = 36 + data_size
+
+    # Build RIFF/WAVE header
+    header = struct.pack(
+        '<4sI4s4sIHHIIHH4sI',
+        b'RIFF',              # Chunk ID
+        file_size,            # Chunk size
+        b'WAVE',              # Format
+        b'fmt ',              # Subchunk1 ID
+        16,                   # Subchunk1 size (PCM)
+        1,                    # Audio format (1 = PCM)
+        num_channels,         # Number of channels
+        sample_rate,          # Sample rate
+        byte_rate,            # Byte rate
+        block_align,          # Block align
+        bits_per_sample,      # Bits per sample
+        b'data',              # Subchunk2 ID
+        data_size             # Subchunk2 size
+    )
+
+    # Combine header and PCM data
+    combined = header + pcm_data
+    return io.BytesIO(combined)
+
+
+def generate_speech(text, language, voice_name):  
+    try:  
+        speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)  
+        speech_config.speech_synthesis_language = language  
+        speech_config.speech_synthesis_voice_name = voice_name  
+        speech_config.set_speech_synthesis_output_format(speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm)  
+
+        audio_output_callback = InMemoryStream()  
+        audio_output_stream = speechsdk.audio.PushAudioOutputStream(audio_output_callback) 
+        audio_config = speechsdk.audio.AudioOutputConfig(stream=audio_output_stream)  
+
+        synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)  
+        result = synthesizer.speak_text_async(text).get()  
+
+        if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:  
+            print("Speech synthesized successfully.")  
+            audio_data = audio_output_callback.close() 
+            # print("type audio data:", audio_data) 
+            
+            
+            # audio_data.seek(0)  # Reset to the start
+            # raw_bytes = audio_data.read(32)  # Read the first 32 bytes
+            # print("Raw bytes of audio data:",  raw_bytes)
+       
+         
+            # print("audio data first 44 bytes:",audio_data.read(32)) 
+            # audio_data.seek(0, 2)  # Move the pointer to the end of the stream
+            # data_length = audio_data.tell()  # Get the current position (i.e., the size in bytes)
+            # audio_data.seek(0)  # Reset the pointer back to the start for further processing
+
+
+            audio_data.seek(0)  # Reset to the start
+            audio_data_with_header = pcm_to_wav(audio_data, num_channels=1, sample_rate=24000, bits_per_sample=16)
+            audio_data_with_header.seek(0)
+            return audio_data_with_header
+        else:  
+            raise Exception("Speech synthesis failed.")  
+    except Exception as e:  
+        print(f"Error in generate_speech: {e}")  
+        raise 
+
+
+class InMemoryStream(speechsdk.audio.PushAudioOutputStreamCallback):  
+    def __init__(self):  
+        super().__init__()  
+        self._audio_data = io.BytesIO()  
+
+    def write(self, buffer: memoryview) -> int:  
+        self._audio_data.write(buffer)  
+        return len(buffer)  
+
+    def close(self):  
+        self._audio_data.seek(0)  
+        return self._audio_data 
+
 
 @app.route("/synthesize", methods=["GET"])
 def synthesize():
     # print("in textToSpeech")
-    text_to_speak = request.args.get('text')
+    text_to_speak = request.args.get('input_text')
     voice = request.args.get('voice')
-    print(text_to_speak,voice)
+    language = request.args.get('language')
+    print('text',text_to_speak,'language',language,'voice',voice)
     if not text_to_speak:
         return jsonify({"error": "Missing 'text' parameter"}), 400
-    # voice = request.args.get('voice')
-    audio_data = generate_speech_from_text(text_to_speak,voice)
-    # print('audio_data: ',audio_data)
-    if audio_data:
-        # Convert to base64 for web transport.
-        audio_base64 = base64.b64encode(audio_data).decode('utf-8')
-        # print("first 10 of base 64", audio_base64[0:11])
-        return jsonify({"audioData": audio_base64, "contentType":"audio/wav"}) #Return the base64 encoded data, and the content type.
-    else:
-        return jsonify({"error": "Speech synthesis failed"}), 500
-
-    # if text_to_speak:
-    #     try:
-    #         audio_stream = generate_speech_from_text(text_to_speak,voice)
-    #         return Response(audio_stream.getvalue(), mimetype="audio/wav")
-    #     except Exception as err:
-    #         print(err)
-    #         return "Error in text-to-speech synthesis", 500
-    # else:
-    #     return "Text not provided", 404
+    
+    print(text_to_speak,language,voice)
+   
+    try:
+        audio_stream = generate_speech(text_to_speak,language, voice)
+        return send_file(audio_stream, as_attachment=True, mimetype="audio/wav", download_name="output.wav")
+    except Exception as e:
+        print(f"Error in synthesize endpoint: {e}")
+        traceback.print_exc()
+        return str(e), 500
+    
        
 @app.route('/start_recognition', methods=['GET'])
 def start_recognition():
     # print("start recognition")
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+    # https://westus2.api.cognitive.microsoft.com/
 
     # print("Speak into your microphone.")
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
