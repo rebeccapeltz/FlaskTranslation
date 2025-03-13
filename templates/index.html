@@ -13,7 +13,7 @@
     <title>Translation and Synthesis</title>
     <style>
         html {
-            font-size: calc(.5em + 1vw);
+            font-size: calc(.2em + 1vw);
         }
 
         body {
@@ -31,6 +31,21 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg bg-info-subtle">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link" href="/about">About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
     <div class="container">
         <div class="d-flex gap-5 justify-content-center m-3">
             <div class="d-flex align-items-center" style="height: h-100"> <!--  or use h-100 (for 100% height)  -->
@@ -40,7 +55,7 @@
                 </div>
             </div>
             <div>
-                <img src="{{url_for('static', filename='images/ask_bus_driver_200.png')}}" alt="Ask the bus driver"
+                <img src="{{url_for('static', filename='images/ask_bus_driver_150.png')}}" alt="Ask the bus driver"
                     class="img-fluid" alt="Responsive image">
             </div>
         </div>
@@ -88,10 +103,10 @@
                 <div class="text-center m-3">
                     <div class="form-group">
                         <textarea placeholder="Type text in any language you want to translate from here" name="text"
-                            id="input_text" cols="15" rows="3" class="form-control"></textarea>
+                            id="input_text" cols="15" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
-   
+
                 <h4 class="text-center mt-3">Translation Language</h4>
                 <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span>
                 </div>
