@@ -1,0 +1,39 @@
+html {
+    font-size: calc(.2em + 1vw);
+}
+body {
+    background-color: aliceblue;
+}
+.background {
+    background-color: aliceblue;
+}
+.active {
+    background-color: lightgray; 
+    }
+
+/* home page */
+.select-question {
+    text-align: center;
+}
+
+
+/* results */
+#speakOriginal,
+#speakTranslated {
+    display: block;
+}
+
+.text-font {
+    font-family: 'Courier New', Times, serif;
+}
+
+.translation {
+    color: #2832c2;
+}
+.scrollable-paragraph{
+    height: 200px;
+    overflow-y: auto;
+}
+.short-navbar{
+    height: 3rem;
+}

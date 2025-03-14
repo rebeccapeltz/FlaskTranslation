@@ -11,29 +11,14 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
     <title>Translation and Synthesis</title>
-    <style>
-        html {
-            font-size: calc(.2em + 1vw);
-        }
-
-        body {
-            background-color: aliceblue;
-        }
-
-        .background {
-            background-color: aliceblue;
-        }
-
-        .select-question {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=now()) }}">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-info-subtle">
+    <nav class="navbar navbar-expand-lg bg-info-subtle short-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"></a>
+            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"
+                    alt="brand logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -48,24 +33,23 @@
     </nav>
     <div class="container">
         <div class="d-flex gap-5 justify-content-center m-3">
-            <div class="d-flex align-items-center" style="height: h-100"> <!--  or use h-100 (for 100% height)  -->
+            <div class="d-flex align-items-center" style="height: h-100">
                 <div>
                     <h2 class="">Traveler's Translator</h2>
-                    <p>Navigate the world better with language</p>
+                    <p>Navigate the world with language</p>
                 </div>
             </div>
             <div>
                 <img src="{{url_for('static', filename='images/ask_bus_driver_150.png')}}" alt="Ask the bus driver"
-                    class="img-fluid" alt="Responsive image">
+                    class="img-fluid">
             </div>
         </div>
 
 
+
         <form id="myForm" method="POST">
-
-
-            <div class="border border-dark m-3 ">
-                <div class="dropdown m-2  select-question">
+            <div class="m-3">
+                <div class="text-start dropdown m-2  select-question">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Select a common traveler's question in English
@@ -74,7 +58,6 @@
                         <li><a class="dropdown-item" href="#">Where is the nearest ATM?</a></li>
                         <li><a class="dropdown-item" href="#">How much is a taxi to the airport?</a></li>
                         <li><a class="dropdown-item" href="#">What's the best way to get to the museum?</a></li>
-
                         <li><a class="dropdown-item" href="#">Is this tap water safe to drink?</a></li>
                         <li><a class="dropdown-item" href="#">Where can I find a good local restaurant?</a></li>
                         <li><a class="dropdown-item" href="#">Do you have Wi-Fi?</a></li>
@@ -82,28 +65,26 @@
                         <li><a class="dropdown-item" href="#">How much does a bus ticket cost?</a></li>
                         <li><a class="dropdown-item" href="#">Is there a tourist information center nearby?</a></li>
                         <li><a class="dropdown-item" href="#">What time does the market open?</a></li>
-
                         <li><a class="dropdown-item" href="#">Can I pay with a credit card?</a></li>
                         <li><a class="dropdown-item" href="#">Where can I exchange currency?</a></li>
                         <li><a class="dropdown-item" href="#">Is it safe to walk here at night?</a></li>
                         <li><a class="dropdown-item" href="#">Where is the train station?</a></li>
                         <li><a class="dropdown-item" href="#">How far is it to the beach?</a></li>
-
                         <li><a class="dropdown-item" href="#">Is there a laundry service here?</a></li>
                         <li><a class="dropdown-item" href="#">What is the local specialty dish?</a></li>
                         <li><a class="dropdown-item" href="#">Does this bus go to the city center?</a></li>
                         <li><a class="dropdown-item" href="#">Where can I buy a local SIM card?</a></li>
-
                     </ul>
                 </div>
-                <div class="text-center m-3">
-                    <h4>OR</h4>
-                </div>
-
+            </div>
+            <div class="text-center m-3">
+                <h4>OR</h4>
+            </div>
+            <div class="x-3 m-3"><span class="fw-bold">Enter the text in any language that you want your translation from:</span>
+               </div>
                 <div class="text-center m-3">
                     <div class="form-group">
-                        <textarea placeholder="Type text in any language you want to translate from here" name="text"
-                            id="input_text" cols="15" rows="2" class="form-control"></textarea>
+                        <textarea id="input_text" name="text" cols="15" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
 
@@ -120,7 +101,7 @@
 
                         <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0"
                             autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio0">Arab</label>
+                        <label class="btn btn-outline-primary" for="btnradio0">Arabic</label>
 
                         <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9"
                             autocomplete="off">
@@ -175,6 +156,7 @@
 
         </form>
     </div>
+
     <script src="{{ url_for('static', filename='js/askQuestion.js', v=now()) }}"></script>
 
 </body>

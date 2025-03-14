@@ -36,7 +36,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-info-subtle">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"></a>
+            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}" alt="Translator logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -44,18 +44,17 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="/about">About</a>
                 </div>
             </div>
         </div>
     </nav>
     <div class="container">
-        <h1>Tranlation From {{detected_language}} to {{target_language}}</h1>
+        <h1>Translation From {{detected_language}} to {{target_language}}</h1>
         <div class="row">
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <!-- <h5 class="card-title">Original Text</h5> -->
                         <div class="fs-4">
                             <strong>Original language:</strong>
                         </div>
@@ -77,7 +76,6 @@
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <!-- <h5 class="card-title">Translated Text</h5> -->
                         <div class="fs-4">
                             <strong>Translated language:</strong>
                         </div>
@@ -87,7 +85,7 @@
                         </div>
                         <div class="fs-4">
                             <strong>Tranlated text:</strong>
-                            <p class="fs-3 p-3 bg-dark text-font text-white scrollable-paragraph" id="translatedText">{{ translated_text }}
+                            <p class="fs-3 p-3 bg-dark text-font text-white scrollable-paragraph" id="translatedText">{{ translated_text }}</p>
                         </div>
 
                         <div>
@@ -100,7 +98,7 @@
 
         <div class="mt-3 mb-3">
 
-            <a class="btn btn-primary btn-lg active" role="button" href="{{ url_for('index') }}">Click for more
+            <a class="btn btn-primary btn-lg active" role="button" href="{{ url_for('index') }}">Click to return home for more
                 translations</a>
         </div>
     </div>

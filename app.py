@@ -1,15 +1,12 @@
-from flask import Flask, render_template, request, jsonify, send_file, Response
+from flask import Flask, render_template, request, jsonify, send_file
 import traceback
 import requests
 import time
 import azure.cognitiveservices.speech as speechsdk
-import base64
-
 import io
 import struct
-
-# Importing the required libraries
 import os
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -22,20 +19,16 @@ speechKey = os.environ.get('SPEECH_KEY')
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-languages = {"ar": "Arab", "zh": "Chinese", \
+languages = {"ar": "Arabic", "zh": "Chinese", \
              "en": "English", "fr": "French", "de": "German", \
              "he": "Hebrew", "it": "Italian", "ja": "Japanese", "ru": "Russian", \
-             "es": "Spanish", "uk": "Ukraine", "zu": "Zulu", "hi": "Hindi"}
+             "es": "Spanish", "uk": "Ukrainian", "zu": "Zulu", "hi": "Hindi"}
 
 
 # get latest version of html imports
 @app.context_processor
 def inject_now():
     return {'now': lambda: str(int(time.time()))}
-
-
-# def index_get():
-#     return render_template('index.html')
 
 @app.route("/about", methods=["GET"])
 def about():
@@ -46,26 +39,17 @@ def index():
     if request.method == 'POST':
         # Read the values from the form
         text_to_translate = request.form['text']
-        # print(text_to_translate)
         target_language_code = request.form['language']
-        # print(target_language_code)
-
-        # Load the values from .env
-        key = os.getenv("TRANSLATOR_KEY")
-        endpoint = os.getenv("TEXT_TRANSLATION_ENDPOINT")
-        location = os.getenv('LOCATION')
 
         # Set up the header information
         headers = {
             'Ocp-Apim-Subscription-Key': key,
-            'Ocp-Apim-Subscription-Region': location,
+            'Ocp-Apim-Subscription-Region': region,
             'Content-type': 'application/json'
         }
 
-        # Create the body of the request with the text to be
-        # translated
+        # Create the body of the request with the text to be translated
         body = [{'text': text_to_translate}]
-        # print('body', body)
 
         # Make the call using post
         response = requests.post(endpoint, headers=headers, json=body, params={"to": target_language_code})
@@ -73,16 +57,10 @@ def index():
         # Check the response
         if response.status_code == 200:
             json_response = response.json()
-
-            # print(json_response)
-
             translated_text = json_response[0]['translations'][0]['text']
-            # print(f"Translated text: {translated_text}")
-
             detected_language_code = json_response[0]['detectedLanguage']['language']
             detected_language_score = json_response[0]['detectedLanguage']['score']
-            # print("detected", detected_language_code, detected_language_score)
-
+# 
             return render_template(
                 'results.html',
                 translated_text=translated_text,
@@ -100,46 +78,6 @@ def index():
         return render_template('index.html')
 
 
-def is_valid_wav(byte_stream):
-
-    try:
-        # Read the first 12 bytes of the byte stream for header validation
-        byte_stream.seek(0)  # Reset to the beginning of the stream
-        header = byte_stream.read(12)  # Read the RIFF, size, and WAVE parts
-
-        print('first 4 bytes',header[:4]) 
-        print('bytestream 8:12',header[8:12])
-
-        # Check RIFF header
-        if header[:4] != b'RIFF':
-            return False
-        # Check WAVE format
-        if header[8:12] != b'WAVE':
-            return False
-
-        # Additional checks for "fmt " and "data" chunks (optional but recommended)
-        while True:
-            chunk_header = byte_stream.read(8)  # Read chunk header (name + size)
-            if len(chunk_header) < 8:  # End of stream
-                break
-            chunk_name = chunk_header[:4]
-            chunk_size = int.from_bytes(chunk_header[4:], byteorder='little')
-
-            if chunk_name == b'fmt ':
-                fmt_chunk = byte_stream.read(chunk_size)
-                # Add checks for format (e.g., PCM = 1)
-            elif chunk_name == b'data':
-                # Data chunk found - validation complete
-                return True
-            else:
-                # Skip over unknown chunks
-                byte_stream.seek(chunk_size, 1)
-
-        return False
-    except Exception as e:
-        print(f"Error validating WAV stream: {e}")
-        return False
-
 def pcm_to_wav(audio_data, num_channels, sample_rate, bits_per_sample):
     # Calculate sizes
     byte_rate = sample_rate * num_channels * bits_per_sample // 8
@@ -149,8 +87,6 @@ def pcm_to_wav(audio_data, num_channels, sample_rate, bits_per_sample):
     audio_data.seek(0)
     pcm_data = audio_data.read()
     data_size = len(pcm_data)
-
-    # data_size = len(pcm_data)
     file_size = 36 + data_size
 
     # Build RIFF/WAVE header
@@ -193,21 +129,7 @@ def generate_speech(text, language, voice_name):
         if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:  
             print("Speech synthesized successfully.")  
             audio_data = audio_output_callback.close() 
-            # print("type audio data:", audio_data) 
-            
-            
-            # audio_data.seek(0)  # Reset to the start
-            # raw_bytes = audio_data.read(32)  # Read the first 32 bytes
-            # print("Raw bytes of audio data:",  raw_bytes)
-       
-         
-            # print("audio data first 44 bytes:",audio_data.read(32)) 
-            # audio_data.seek(0, 2)  # Move the pointer to the end of the stream
-            # data_length = audio_data.tell()  # Get the current position (i.e., the size in bytes)
-            # audio_data.seek(0)  # Reset the pointer back to the start for further processing
-
-
-            audio_data.seek(0)  # Reset to the start
+            audio_data.seek(0)  
             audio_data_with_header = pcm_to_wav(audio_data, num_channels=1, sample_rate=24000, bits_per_sample=16)
             audio_data_with_header.seek(0)
             return audio_data_with_header
@@ -215,7 +137,7 @@ def generate_speech(text, language, voice_name):
             raise Exception("Speech synthesis failed.")  
     except Exception as e:  
         print(f"Error in generate_speech: {e}")  
-        raise 
+        raise Exception("Error in generate_speech")
 
 
 class InMemoryStream(speechsdk.audio.PushAudioOutputStreamCallback):  
@@ -237,12 +159,9 @@ def synthesize():
     text_to_speak = request.args.get('input_text')
     voice = request.args.get('voice')
     language = request.args.get('language')
-    print('text',text_to_speak,'language',language,'voice',voice)
     if not text_to_speak:
         return jsonify({"error": "Missing 'text' parameter"}), 400
-    
-    print(text_to_speak,language,voice)
-   
+       
     try:
         audio_stream = generate_speech(text_to_speak,language, voice)
         return send_file(audio_stream, as_attachment=True, mimetype="audio/wav", download_name="output.wav")
@@ -254,7 +173,6 @@ def synthesize():
        
 @app.route('/start_recognition', methods=['GET'])
 def start_recognition():
-    # print("start recognition")
     speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
     speech_recognition_result = speech_recognizer.recognize_once_async().get()
