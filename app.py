@@ -170,20 +170,5 @@ def synthesize():
         traceback.print_exc()
         return str(e), 500
     
-       
-@app.route('/start_recognition', methods=['GET'])
-def start_recognition():
-    speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)
-    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
-    speech_recognition_result = speech_recognizer.recognize_once_async().get()
-   
-    if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        return jsonify({'text': speech_recognition_result.text})
-    elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
-        return jsonify({'text': 'No speech could be recognized'})
-    else:
-        return jsonify({'text': 'Speech recognition canceled'})
-
-
 if __name__ == '__main__':
     app.run(debug=True)
