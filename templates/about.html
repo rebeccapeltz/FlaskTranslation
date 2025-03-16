@@ -13,12 +13,19 @@
     <title>Translation and Synthesis</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=now()) }}">
 
+    <style>
+        .custom-container {
+            width: 60%;
+            max-width: 100%;
+        }
+    </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg bg-info-subtle">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}" alt="brand logo"></a>
+            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"
+                    alt="brand logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -31,10 +38,27 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+
+    <div class="container custom-container">
         <h2 class="m-3">About Traveler's Translator</h2>
+
+        <p>Traveler's Translator is your go-to companion for seamless communication while traveling. This
+            web-based application translates common phrases into 13 languages and uses AI-powered speech
+            synthesis to speak both the original and translated text, helping travelers bridge language barriers
+            with ease.</p>
+
+        <p>Built with Flask for the backend and a responsive HTML/CSS/JavaScript frontend, Traveler's Translator
+            runs smoothly on all devices. The app leverages cutting-edge Azure AI services, including Azure
+            Speech Service and Azure AI Translator, to deliver accurate translations and natural-sounding
+            speech.</p>
+
+        <p>Deployed as an Azure App Service, Traveler's Translator is designed for reliability and accessibility
+            wherever you go. This project is also a proud entry in a DevPost hackathon focused on Azure AI
+            innovation.</p>
+
+        <p>GitHub Copilot was use as an aid in creating the code.</p>
+
+        </p>Explore the world with confidence—let Traveler's Translator be your voice across borders!
     </div>
-
 </body>
-
 </html>

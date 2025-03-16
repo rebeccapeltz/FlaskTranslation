@@ -1,5 +1,20 @@
+/* Base font size for desktop */
 html {
     font-size: calc(.2em + 1vw);
+}
+
+/* Font size for tablets (width between 600px and 900px) */
+@media (max-width: 900px) and (min-width: 600px) {
+    html {
+        font-size: calc(.3em + 1vw);
+    }
+}
+
+/* Font size for mobile devices (width less than 600px) */
+@media (max-width: 600px) {
+    html {
+        font-size: calc(.4em + 1vw);
+    }
 }
 body {
     background-color: aliceblue;
