@@ -10,7 +10,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-# Load the values from .env
+# Get the environment variables
 key = os.environ.get("TRANSLATOR_KEY")
 endpoint = os.environ.get("TEXT_TRANSLATION_ENDPOINT")
 region = os.environ.get('LOCATION')
@@ -25,17 +25,37 @@ languages = {"ar": "Arabic", "zh": "Chinese", \
              "es": "Spanish", "uk": "Ukrainian", "zu": "Zulu", "hi": "Hindi"}
 
 
-# get latest version of html imports
+
 @app.context_processor
 def inject_now():
+    """
+    This function injects the current time into the template context.
+    This is useful for reloading JavaScript libraries referenced in templates.
+    Look at script tags in the templates for this: v=now()
+    """
     return {'now': lambda: str(int(time.time()))}
 
 @app.route("/about", methods=["GET"])
 def about():
+    """
+    Render the about template.
+    """
     return render_template('about.html')
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    """
+    If POST call the Azure Translator Text API to translate the text.
+    If GET render the index template.
+    The form on the index page will call this function with a POST request.
+    The function will read the values from the form and call the Azure Translator Text API to translate the text.
+    The response from the API will be returned to the results template.
+    The results template will display the translated text and other information.
+    Args:
+        request (object): The request object.
+    Returns:
+        object: The response object.
+    """
     if request.method == 'POST':
         # Read the values from the form
         text_to_translate = request.form['text']
@@ -60,7 +80,7 @@ def index():
             translated_text = json_response[0]['translations'][0]['text']
             detected_language_code = json_response[0]['detectedLanguage']['language']
             detected_language_score = json_response[0]['detectedLanguage']['score']
-# 
+
             return render_template(
                 'results.html',
                 translated_text=translated_text,
@@ -79,7 +99,16 @@ def index():
 
 
 def pcm_to_wav(audio_data, num_channels, sample_rate, bits_per_sample):
-    # Calculate sizes
+    """
+    Converts PCM audio data to WAV format.
+    Args:
+        audio_data (io.BytesIO): The PCM audio data.
+        num_channels (int): The number of audio channels.
+        sample_rate (int): The sample rate of the audio.
+        bits_per_sample (int): The number of bits per sample.
+    Returns:
+        io.BytesIO: A BytesIO object containing the WAV formatted audio.
+    """
     byte_rate = sample_rate * num_channels * bits_per_sample // 8
     block_align = num_channels * bits_per_sample // 8
 
@@ -113,6 +142,20 @@ def pcm_to_wav(audio_data, num_channels, sample_rate, bits_per_sample):
 
 
 def generate_speech(text, language, voice_name):  
+    """
+    Generates speech audio from the given text using specified language and voice.
+
+    Args:
+        text (str): The text to be converted to speech.
+        language (str): The language code for speech synthesis (e.g., 'en-US').
+        voice_name (str): The name of the voice to be used for speech synthesis.
+
+    Returns:
+        io.BytesIO: A BytesIO object containing the synthesized speech audio in WAV format.
+
+    Raises:
+        Exception: If speech synthesis fails for any reason.
+    """
     try:  
         speech_config = speechsdk.SpeechConfig(subscription=speechKey, region=region)  
         speech_config.speech_synthesis_language = language  
@@ -137,25 +180,61 @@ def generate_speech(text, language, voice_name):
             raise Exception("Speech synthesis failed.")  
     except Exception as e:  
         print(f"Error in generate_speech: {e}")  
-        raise Exception("Error in generate_speech")
-
+        raise e
 
 class InMemoryStream(speechsdk.audio.PushAudioOutputStreamCallback):  
-    def __init__(self):  
+    """
+    A class that handles in-memory audio stream callbacks for speech synthesis.
+    This class inherits from PushAudioOutputStreamCallback and is used to capture
+    synthesized speech audio data in memory.
+    """
+    def __init__(self):
+        """
+        Initializes the InMemoryStream instance.
+        This constructor sets up an in-memory stream to capture audio data.
+        """  
         super().__init__()  
         self._audio_data = io.BytesIO()  
 
-    def write(self, buffer: memoryview) -> int:  
+    def write(self, buffer: memoryview) -> int: 
+        """
+        Writes audio data to the in-memory stream.
+        This method is called by the speech synthesis engine to provide audio data.
+        Args:
+            buffer (memoryview): A memory view of the audio data to be written.
+        Returns:
+            int: The number of bytes written to the stream.
+        """ 
         self._audio_data.write(buffer)  
         return len(buffer)  
 
-    def close(self):  
+    def close(self):
+        """
+        Closes the in-memory audio stream.
+        This method is called to finalize the audio stream and return the captured data.
+        Returns:
+            io.BytesIO: A BytesIO object containing the captured audio data.
+        """
+
         self._audio_data.seek(0)  
         return self._audio_data 
 
 
 @app.route("/synthesize", methods=["GET"])
 def synthesize():
+    """
+    Synthesizes speech from the input text using Azure Cognitive Services.
+    This endpoint receives a GET request with parameters for text, voice, and language,
+    and returns the synthesized speech audio in WAV format.
+    Args:
+        text (str): The input text to be synthesized.
+        voice (str): The name of the voice to be used for synthesis.
+        language (str): The language code for the synthesis (e.g., 'en-US').
+    Returns:
+        Response: A Flask response object containing the synthesized speech audio in WAV format.
+    Raises:
+        Exception: If there is an error during speech synthesis.
+    """
     text_to_speak = request.args.get('input_text')
     voice = request.args.get('voice')
     language = request.args.get('language')
