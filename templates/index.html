@@ -80,79 +80,71 @@
             <div class="text-center m-3">
                 <h4>OR</h4>
             </div>
-            <div class="x-3 m-3"><span class="fw-bold">Enter the text in any language that you want your translation from:</span>
-               </div>
-                <div class="text-center m-3">
-                    <div class="form-group">
-                        <textarea id="input_text" name="text" cols="15" rows="2" class="form-control"></textarea>
-                    </div>
+            <div class="x-3 m-3"><span class="fw-bold">Enter the text in any language that you want your translation
+                    from:</span>
+            </div>
+            <div class="text-center m-3">
+                <div class="form-group">
+                    <textarea id="input_text" name="text" cols="15" rows="2" class="form-control"></textarea>
                 </div>
+            </div>
 
-                <h4 class="text-center mt-3">Translation Language</h4>
-                <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span>
+            <h4 class="text-center mt-3">Translation Language</h4>
+            <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span>
+            </div>
+
+            <div class="border border-dark text-center m-3">
+                <div class="btn-group flex-wrap m-3" role="group" aria-label="Language to translate to">
+
+                    <input type="radio" value="en" class="btn-check" name="language" id="btnradio1" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="btnradio1">English</label>
+
+                    <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio0">Arabic</label>
+
+                    <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio9">Chinese</label>
+
+                    <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio2">French</label>
+
+                    <input type="radio" value="de" class="btn-check" name="language" id="btnradio3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio3">German</label>
+
+                    <input type="radio" value="el" class="btn-check" name="language" id="btnradioEl" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradioEl">Greek</label>
+
+                    <input type="radio" value="he" class="btn-check" name="language" id="btnradio02" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio02">Hebrew</label>
+
+                    <input type="radio" value="hi" class="btn-check" name="language" id="btnradio01" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio01">Hindi</label>
+
+                    <input type="radio" value="it" class="btn-check" name="language" id="btnradio4" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
+
+                    <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
+
+                    <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
+
+                    <input type="radio" value="es" class="btn-check" name="language" id="btnradio7" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
+
+                    <input type="radio" value="uk" class="btn-check" name="language" id="btnradio8" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio8">Ukrainian</label>
+
+                    <input type="radio" value="zu" class="btn-check" name="language" id="btnradio03" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio03">Zulu</label>
                 </div>
-
-                <div class="border border-dark text-center m-3">
-                    <div class="btn-group flex-wrap m-3" role="group" aria-label="Language to translate to">
-
-                        <input type="radio" value="en" class="btn-check" name="language" id="btnradio1"
-                            autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="btnradio1">English</label>
-
-                        <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio0">Arabic</label>
-
-                        <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio9">Chinese</label>
-
-                        <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio2">French</label>
-
-                        <input type="radio" value="de" class="btn-check" name="language" id="btnradio3"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio3">German</label>
-
-                        <input type="radio" value="he" class="btn-check" name="language" id="btnradio02"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio02">Hebrew</label>
-
-                        <input type="radio" value="hi" class="btn-check" name="language" id="btnradio01"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio01">Hindi</label>
-
-                        <input type="radio" value="it" class="btn-check" name="language" id="btnradio4"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
-
-                        <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
-
-                        <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
-
-                        <input type="radio" value="es" class="btn-check" name="language" id="btnradio7"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
-
-                        <input type="radio" value="uk" class="btn-check" name="language" id="btnradio8"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio8">Ukrainian</label>
-
-                        <input type="radio" value="zu" class="btn-check" name="language" id="btnradio03"
-                            autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio03">Zulu</label>
-                    </div>
-                </div>
+            </div>
 
 
-                <div class="m-3 text-end">
-                    <button type="submit" class="btn btn-lg btn-primary">Translate</button>
-                </div>
+            <div class="m-3 text-end">
+                <button type="submit" class="btn btn-lg btn-primary">Translate</button>
+            </div>
 
         </form>
     </div>

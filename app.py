@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 languages = {"ar": "Arabic", "zh": "Chinese", \
-             "en": "English", "fr": "French", "de": "German", \
+             "en": "English", "fr": "French", "de": "German","el":"Greek", \
              "he": "Hebrew", "it": "Italian", "ja": "Japanese", "ru": "Russian", \
              "es": "Spanish", "uk": "Ukrainian", "zu": "Zulu", "hi": "Hindi"}
 

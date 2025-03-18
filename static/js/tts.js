@@ -3,6 +3,7 @@ const voices = [
   { countryCode: "en", voice: "en-US-AvaMultilingualNeural" },
   { countryCode: "fr", voice: "fr-FR-DeniseNeural" },
   { countryCode: "de", voice: "de-DE-KatjaNeural" },
+  { countryCode: "el", voice: "el-GR-NestorasNeural" },
   { countryCode: "he", voice: "he-IL-HilaNeural" },
   { countryCode: "it", voice: "it-IT-ElsaNeural" },
   { countryCode: "ja", voice: "ja-JP-NanamiNeural" },
