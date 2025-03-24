@@ -37,12 +37,23 @@ get key and cloud region so you can make a call to the API.
 
 [Text Translation](https://learn.microsoft.com/en-us/azure/ai-services/translator/text-translation/overview)
 
-### Speech Service for Speech Synthesis 
+### Speech Service
+Apply Azure subscription to Azure AI Speech Service resource group. You'll get a speech key and cloud region. 
 
-Apply Azure subscription to Azure AI Speech Service resource group. You'll get a speech key 
-and cloud region.
+#### Speech Synthesis 
 
-[Text to Speech](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech)  
+The Python SDK was used to generate Speech from text.
+
+[Text to Speech](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech) 
+
+#### Speech Recognition
+
+A Rest call to the Speech Recognition endpoint was used to generate text from speech.
+The speech was collected in the browser using the MediaRecorder API.
+
+When you use speech recognition to generate input text, the browser will prompt you to allow access to the media recorder.
+
+[Speech to Text](// https://learn.microsoft.com/en-us/azure/ai-services/speech-service/rest-speech-to-text-short)
 
 
 ## Get Key  

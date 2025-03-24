@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-info-subtle">
+    <nav class="navbar navbar-expand-lg bg-info-subtle navbar-height">
         <div class="container-fluid">
             <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"
                     alt="brand logo"></a>
@@ -42,12 +42,26 @@
     <div class="container custom-container">
         <h2 class="my-3">About Traveler's Translator</h2>
 
-        <div class="my-3"><a href="https://github.com/rebeccapeltz/FlaskTranslation" target="_blank">Application Code</a></div>
+        <div class="my-3"><a href="https://github.com/rebeccapeltz/FlaskTranslation" target="_blank">Application
+                Code</a></div>
 
         <p>Traveler's Translator is your go-to companion for seamless communication while traveling. This
-            web-based application translates common phrases into 13 languages and uses AI-powered speech
-            synthesis to speak both the original and translated text, helping travelers bridge language barriers
-            with ease.</p>
+            web-based application offer the user <strong>three ways to enter text</strong> to translate:</p>
+        <ol>
+            <li>Choose an English phrase from a set of common phrases used in traveling.</li>
+            <li>Choose a language and speak the phrase and it will be translated to text using Azure Speech Recognition.
+                The first time you use speech recognition to generate input text, the browser will 
+                prompt you to allow microphone access.
+            </li>
+            <li>Type text in any language into the text box
+                and Azure Translation will detect the language and use it as the source language.
+            </li>
+        </ol>
+        <p>Pressing the tranlate button after selecting the language to tranlate text to,
+        will initate translation. The original and translated text are shown along with buttons
+        that allow the user to hear the spoken text. This feature using Azure speech
+        synthesis to speak both the original and translated text, helping travelers bridge language barriers
+        with ease.</p>
 
         <p>Built with Flask for the backend and a responsive HTML/CSS/JavaScript frontend, Traveler's Translator
             runs smoothly on all devices. The app leverages cutting-edge Azure AI services, including Azure
@@ -58,9 +72,12 @@
             wherever you go. This project is also a proud entry in a DevPost hackathon focused on Azure AI
             innovation.</p>
 
-        <p>GitHub Copilot was use as an aid in creating the code.</p>
+        <p>GitHub Copilot was use as an aid in creating the code and working with methods of audio data 
+            transformations and movement across the internet.
+        </p>
 
         </p>Explore the world with confidence—let Traveler's Translator be your voice across borders!
     </div>
 </body>
+
 </html>

@@ -12,10 +12,38 @@
         crossorigin="anonymous"></script>
     <title>Translation and Synthesis</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=now()) }}">
+
+    <style>
+        .buttonText {
+            display: block;
+            font-size: 14px;
+        }
+
+        /* add media query */
+        .customWidth {
+            width: 90%;
+        }
+
+        @media (max-width: 412px) {
+            .customWidth {
+                width: 100%;
+            }
+        }
+
+
+        .custom-btn {
+            padding: 0.25rem 0.15rem;
+            /* Adjust the padding as needed */
+            margin: 0.15rem;
+            /* Adjust the margin as needed */
+            font-size: 0.75rem;
+            /* Adjust the font size as needed */
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-info-subtle short-navbar">
+    <nav class="navbar navbar-expand-lg bg-info-subtle navbar-height">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='images/favicon.png', v=now()) }}"
                     alt="brand logo"></a>
@@ -45,111 +73,160 @@
             </div>
         </div>
 
-
-
         <form id="myForm" method="POST">
-            <div class="m-3">
-                <div class="text-start dropdown m-2  select-question">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Select a common traveler's question in English
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#">Where is the nearest ATM?</a></li>
-                        <li><a class="dropdown-item" href="#">How much is a taxi to the airport?</a></li>
-                        <li><a class="dropdown-item" href="#">What's the best way to get to the museum?</a></li>
-                        <li><a class="dropdown-item" href="#">Is this tap water safe to drink?</a></li>
-                        <li><a class="dropdown-item" href="#">Where can I find a good local restaurant?</a></li>
-                        <li><a class="dropdown-item" href="#">Do you have Wi-Fi?</a></li>
-                        <li><a class="dropdown-item" href="#">Where is the closest pharmacy?</a></li>
-                        <li><a class="dropdown-item" href="#">How much does a bus ticket cost?</a></li>
-                        <li><a class="dropdown-item" href="#">Is there a tourist information center nearby?</a></li>
-                        <li><a class="dropdown-item" href="#">What time does the market open?</a></li>
-                        <li><a class="dropdown-item" href="#">Can I pay with a credit card?</a></li>
-                        <li><a class="dropdown-item" href="#">Where can I exchange currency?</a></li>
-                        <li><a class="dropdown-item" href="#">Is it safe to walk here at night?</a></li>
-                        <li><a class="dropdown-item" href="#">Where is the train station?</a></li>
-                        <li><a class="dropdown-item" href="#">How far is it to the beach?</a></li>
-                        <li><a class="dropdown-item" href="#">Is there a laundry service here?</a></li>
-                        <li><a class="dropdown-item" href="#">What is the local specialty dish?</a></li>
-                        <li><a class="dropdown-item" href="#">Does this bus go to the city center?</a></li>
-                        <li><a class="dropdown-item" href="#">Where can I buy a local SIM card?</a></li>
-                    </ul>
+            <div class="row text-start">
+                <p class="fw-bold m-0">Choose from three options to enter text to translate:</p>
+            </div>
+            <!-- entering from text -->
+            <div class="border border-dark ">
+                <div class="m-2 text-center row">
+                    <div class=" dropdown select-question">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Select a common traveler's question in English
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="#">Where is the nearest ATM?</a></li>
+                            <li><a class="dropdown-item" href="#">How much is a taxi to the airport?</a></li>
+                            <li><a class="dropdown-item" href="#">What's the best way to get to the museum?</a></li>
+                            <li><a class="dropdown-item" href="#">Is this tap water safe to drink?</a></li>
+                            <li><a class="dropdown-item" href="#">Where can I find a good local restaurant?</a></li>
+                            <li><a class="dropdown-item" href="#">Do you have Wi-Fi?</a></li>
+                            <li><a class="dropdown-item" href="#">Where is the closest pharmacy?</a></li>
+                            <li><a class="dropdown-item" href="#">How much does a bus ticket cost?</a></li>
+                            <li><a class="dropdown-item" href="#">Is there a tourist information center nearby?</a></li>
+                            <li><a class="dropdown-item" href="#">What time does the market open?</a></li>
+                            <li><a class="dropdown-item" href="#">Can I pay with a credit card?</a></li>
+                            <li><a class="dropdown-item" href="#">Where can I exchange currency?</a></li>
+                            <li><a class="dropdown-item" href="#">Is it safe to walk here at night?</a></li>
+                            <li><a class="dropdown-item" href="#">Where is the train station?</a></li>
+                            <li><a class="dropdown-item" href="#">How far is it to the beach?</a></li>
+                            <li><a class="dropdown-item" href="#">Is there a laundry service here?</a></li>
+                            <li><a class="dropdown-item" href="#">What is the local specialty dish?</a></li>
+                            <li><a class="dropdown-item" href="#">Does this bus go to the city center?</a></li>
+                            <li><a class="dropdown-item" href="#">Where can I buy a local SIM card?</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="text-center m-3">
-                <h4>OR</h4>
-            </div>
-            <div class="x-3 m-3"><span class="fw-bold">Enter the text in any language that you want your translation
-                    from:</span>
-            </div>
-            <div class="text-center m-3">
-                <div class="form-group">
-                    <textarea id="input_text" name="text" cols="15" rows="2" class="form-control"></textarea>
+                <div class="text-center m-1 row">
+                    <h6>OR</h6>
+                </div>
+
+                <!-- speech recognition-->
+                <div class="row mx-auto">
+                    <div class="col-8  d-flex justify-content-end">
+                        <div class="input-group customWidth">
+                            <select id="speechLanguageSelect" class="form-select">
+                                <option value="none" selected>Click to select a language and use buttons to start and stop speaking
+                                </option>
+                                <option value="ar-SA">Arabic</option>
+                                <option value="zh-CN">Chinese</option>
+                                <option value="en-US">English</option>
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="el-GR">Greek</option>
+                                <option value="he-IL">Hebrew</option>
+                                <option value="hi-IN">Hindi</option>
+                                <option value="it-IT">Italian</option>
+                                <option value="ja-JP">Japanese</option>
+                                <option value="ru-RU">Russian</option>
+                                <option value="es-MX">Spanish</option>
+                                <option value="uk-UA">Ukrainian</option>
+                                <option value="zu-ZA">Zulu</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="input-group-append">
+                            <!-- <button id="speakInput" class="btn btn-primary">
+                            Click to speak in chosen language
+                        </button> -->
+                            <a role="button" id="speechOn" class="btn btn-secondary rounded-pill m-1 p-2">
+                                <span class="buttonText">Start<br>Speaking</span>
+                            </a>
+                            <a role="button" id="speechOff" class="btn btn-secondary rounded-pill m1 p-2">
+                                <span class="buttonText">Stop<br>Speaking</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-center m-1">
+                    <h6>OR</h6>
+                </div>
+                <!-- enter text manually -->
+                <div class="row text-center m-2">
+                    <div class="form-group">
+                        <textarea placeholder="Type text in any language" id="input_text" name="text"
+                            class="form-control"></textarea>
+                    </div>
                 </div>
             </div>
 
-            <h4 class="text-center mt-3">Translation Language</h4>
-            <div class="m-3"><span class="fw-bold">Select the language you want your text translated to:</span>
+            <!-- entering to language -->
+            <div class="row text-start">
+                <p class="fw-bold pt-3 m-0">Translate to:</p>
             </div>
 
-            <div class="border border-dark text-center m-3">
-                <div class="btn-group flex-wrap m-3" role="group" aria-label="Language to translate to">
+            <div class="row text-center border border-dark mx-auto">
+                <div class="btn-group flex-wrap py-2 px-0" role="group" aria-label="translate to">
 
                     <input type="radio" value="en" class="btn-check" name="language" id="btnradio1" autocomplete="off"
                         checked>
-                    <label class="btn btn-outline-primary" for="btnradio1">English</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio1">English</label>
 
                     <input type="radio" value="ar" class="btn-check" name="language" id="btnradio0" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio0">Arabic</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio0">Arabic</label>
 
                     <input type="radio" value="zh" class="btn-check" name="language" id="btnradio9" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio9">Chinese</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio9">Chinese</label>
 
                     <input type="radio" value="fr" class="btn-check" name="language" id="btnradio2" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio2">French</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio2">French</label>
 
                     <input type="radio" value="de" class="btn-check" name="language" id="btnradio3" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio3">German</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio3">German</label>
 
                     <input type="radio" value="el" class="btn-check" name="language" id="btnradioEl" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradioEl">Greek</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradioEl">Greek</label>
 
                     <input type="radio" value="he" class="btn-check" name="language" id="btnradio02" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio02">Hebrew</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio02">Hebrew</label>
 
                     <input type="radio" value="hi" class="btn-check" name="language" id="btnradio01" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio01">Hindi</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio01">Hindi</label>
 
                     <input type="radio" value="it" class="btn-check" name="language" id="btnradio4" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio4">Italian</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio4">Italian</label>
 
                     <input type="radio" value="ja" class="btn-check" name="language" id="btnradio5" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio5">Japanese</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio5">Japanese</label>
 
                     <input type="radio" value="ru" class="btn-check" name="language" id="btnradio6" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio6">Russian</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio6">Russian</label>
 
                     <input type="radio" value="es" class="btn-check" name="language" id="btnradio7" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio7">Spanish</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio7">Spanish</label>
 
                     <input type="radio" value="uk" class="btn-check" name="language" id="btnradio8" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio8">Ukrainian</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio8">Ukrainian</label>
 
                     <input type="radio" value="zu" class="btn-check" name="language" id="btnradio03" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio03">Zulu</label>
+                    <label class="btn btn-outline-primary custom-btn" for="btnradio03">Zulu</label>
                 </div>
             </div>
 
 
-            <div class="m-3 text-end">
-                <button type="submit" class="btn btn-lg btn-primary">Translate</button>
+            <div class="m-2 text-end">
+                <button type="submit" class="btn btn-md btn-primary">Translate Text</button>
             </div>
 
         </form>
     </div>
 
+
     <script src="{{ url_for('static', filename='js/askQuestion.js', v=now()) }}"></script>
+    <script src="{{ url_for('static', filename='js/speechRecognition.js', v=now()) }}"></script>
 
 </body>
 

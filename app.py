@@ -6,6 +6,8 @@ import azure.cognitiveservices.speech as speechsdk
 import io
 import struct
 import os
+from pydub import AudioSegment
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,6 +17,7 @@ key = os.environ.get("TRANSLATOR_KEY")
 endpoint = os.environ.get("TEXT_TRANSLATION_ENDPOINT")
 region = os.environ.get('LOCATION')
 speechKey = os.environ.get('SPEECH_KEY')
+speechEndpoint = os.environ.get('SPEECH_ENDPOINT')
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -248,6 +251,54 @@ def synthesize():
         print(f"Error in synthesize endpoint: {e}")
         traceback.print_exc()
         return str(e), 500
+
+@app.route('/upload_audio', methods=['POST'])
+def upload_audio():
+    try:
+        print("Received audio upload request")
+        
+        # Ensure the language parameter is correctly set in the endpoint URL
+        language = request.form.get('language', 'en-US')  # Default to 'en-US' if not provided
+        endpoint = f"https://{region}.stt.speech.microsoft.com/speech/recognition/dictation/cognitiveservices/v1?language={language}"
+        print('Sending request to:', endpoint)
+        
+        audio_file = request.files["audio"]  # Get uploaded file (raw WebM/Opus, Ogg, etc.)
+        audio_data = audio_file.read()  # Read file into memory
+
+        # Convert to WAV format
+        audio_segment = AudioSegment.from_file(io.BytesIO(audio_data))  # Auto-detects format
+        audio_segment = audio_segment.set_frame_rate(16000).set_channels(1).set_sample_width(2)  # PCM 16-bit, mono
+
+        # Convert back to bytes
+        wav_io = io.BytesIO()
+        audio_segment.export(wav_io, format="wav")
+        wav_io.seek(0)
+        print("Audio converted to WAV format")
+
+        # Send to Azure Speech API
+        headers = {
+            "Ocp-Apim-Subscription-Key": speechKey,
+            'Ocp-Apim-Region': region,
+            "Content-Type": "audio/wav",
+            "Accept": "application/json;text/xml",
+            "Content-Length": str(len(wav_io.getvalue()))
+        }
+
+        response = requests.post(endpoint, headers=headers, data=wav_io)
+        print(response.text)
+        if response.status_code == 200:
+            return jsonify({"text": response.json().get("DisplayText", "")})
+        else:
+            print(f"Azure Speech API Error {response.status_code}: {response.text}")  # Log error
+            return jsonify({
+                "error": "Azure API error",
+                "status_code": response.status_code,
+                "details": response.text
+            }), response.status_code
+    except Exception as e:
+        print(f"Error in upload_audio: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Internal server error"}), 500
     
 if __name__ == '__main__':
     app.run(debug=True)

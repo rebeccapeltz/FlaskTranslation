@@ -4,3 +4,5 @@ requests
 python-dotenv
 azure-ai-translation-text
 azure-cognitiveservices-speech
+pydub
+audioop-lts
