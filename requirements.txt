@@ -4,6 +4,6 @@ requests
 python-dotenv
 azure-ai-translation-text
 azure-cognitiveservices-speech
-audioop-lts
 pydub
+git+https://github.com/long-term-support/audioop-lts.git
 
