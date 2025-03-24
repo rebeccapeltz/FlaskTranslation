@@ -125,3 +125,8 @@ python-dotenv
 azure-ai-translation-text
 azure-cognitiveservices-speech``
 ```
+## Problem with installing audioop-lts
+added startup script
+and use 
+git+https://github.com/long-term-support/audioop-lts.git
+in requirements.txt
