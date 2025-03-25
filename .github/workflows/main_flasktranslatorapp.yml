@@ -20,6 +20,28 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Download and Install FFmpeg in Persisted Location
+        run: |
+            mkdir -p $GITHUB_WORKSPACE/ffmpeg
+            cd $GITHUB_WORKSPACE/ffmpeg
+            curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+            tar -xf ffmpeg.tar.xz --strip-components=1
+            rm ffmpeg.tar.xz
+            chmod +x ffmpeg
+  
+      - name: Move FFmpeg to Persisted Directory
+        run: |
+            mkdir -p $GITHUB_WORKSPACE/site/wwwroot/bin
+            mv $GITHUB_WORKSPACE/ffmpeg/ffmpeg $GITHUB_WORKSPACE/site/wwwroot/bin/
+            mv $GITHUB_WORKSPACE/ffmpeg/ffprobe $GITHUB_WORKSPACE/site/wwwroot/bin/
+  
+      - name: Set Execute Permissions
+        run: chmod +x $GITHUB_WORKSPACE/site/wwwroot/bin/ffmpeg $GITHUB_WORKSPACE/site/wwwroot/bin/ffprobe
+    
+      - name: Verify FFmpeg after Deployment
+        run: |
+          /home/site/wwwroot/bin/ffmpeg -version
+
       - name: Create and start virtual environment
         run: |
           python -m venv venv
@@ -54,15 +76,6 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-
-      - name: Copy startup script
-        run: cp startup.sh /home/site/wwwroot/startup.sh
-
-      - name: Make startup script executable
-        run: chmod +x /home/site/wwwroot/startup.sh
-
-      - name: Run startup script
-        run: /home/site/wwwroot/startup.sh
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3

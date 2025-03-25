@@ -131,3 +131,15 @@ and use
 git+https://github.com/long-term-support/audioop-lts.git
 in requirements.txt
 need to instal ffmpeg and check for that
+
+In Azure KUDU console
+apt-get update
+apt-get install -y ffmpeg
+
+find using ssh
+ind / -name ffmpeg 2>/dev/null
+/usr/bin/ffmpeg
+/usr/share/lintian/overrides/ffmpeg
+/usr/share/doc/ffmpeg
+/usr/share/ffmpeg
+(antenv) root@flask

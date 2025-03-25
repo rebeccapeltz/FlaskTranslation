@@ -13,3 +13,5 @@ junk/
 *.mp4
 backup/
 .vscode/
+copilot_readme.md
+ffmpeg-install.md
