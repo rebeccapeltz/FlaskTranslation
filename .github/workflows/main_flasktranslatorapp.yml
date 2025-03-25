@@ -65,10 +65,16 @@ jobs:
 
       - name: Install FFmpeg in Azure Web App
         run: |
-          sudo apt-get update;
-          sudo apt-get install -y ffmpeg;
-          ls -l /usr/bin/ffmpeg;  # List the ffmpeg binary to verify installation
+          ssh -o StrictHostKeyChecking=no azureuser@flasktranslatorapp.scm.azurewebsites.net << 'EOF'
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ls -l /usr/bin/ffmpeg  # Verify installation
+          EOF
+          # sudo apt-get update;
+          # sudo apt-get install -y ffmpeg;
+          # ls -l /usr/bin/ffmpeg;  # List the ffmpeg binary to verify installation
 
       - name: Verify FFmpeg Installation
-        run: |
-          ffmpeg -version
+        run: 
+          ssh azureuser@flasktranslatorapp.scm.azurewebsites.net "ffmpeg -version"|
+          # ffmpeg -version
