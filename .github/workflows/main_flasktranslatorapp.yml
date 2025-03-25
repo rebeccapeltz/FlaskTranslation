@@ -65,14 +65,10 @@ jobs:
 
       - name: Install FFmpeg in Azure Web App
         run: |
-          curl -L -o /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz;
-          mkdir -p /home/site/wwwroot/bin;
-          tar -xf /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz -C /home/site/wwwroot/bin --strip-components=1;
-          rm /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz;
-          chmod +x /home/site/wwwroot/bin/ffmpeg /home/site/wwwroot/bin/ffprobe;
-          echo 'export PATH=$PATH:/home/site/wwwroot/bin' >> /home/site/wwwroot/.bashrc;  # Add to PATH
-          ls -l /home/site/wwwroot/bin;  # List the contents of the bin directory to verify installation
+          sudo apt-get update;
+          sudo apt-get install -y ffmpeg;
+          ls -l /usr/bin/ffmpeg;  # List the ffmpeg binary to verify installation
 
       - name: Verify FFmpeg Installation
         run: |
-          /home/site/wwwroot/bin/ffmpeg -version
+          ffmpeg -version
