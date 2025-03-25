@@ -65,16 +65,12 @@ jobs:
 
       - name: Install FFmpeg in Azure Web App
         run: |
-          az webapp ssh --name flasktranslatorapp --resource-group MyFlaskAppResources --command "
-          cd /home/site/wwwroot;
-          mkdir -p bin;
-          cd bin;
-          curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz;
-          tar -xf ffmpeg.tar.xz --strip-components=1;
-          rm ffmpeg.tar.xz;
-          chmod +x ffmpeg ffprobe;
-          "
-  
+          curl -L -o /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz;
+          mkdir -p /home/site/wwwroot/bin;
+          tar -xf /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz -C /home/site/wwwroot/bin --strip-components=1;
+          rm /home/site/wwwroot/ffmpeg-release-amd64-static.tar.xz;
+          chmod +x /home/site/wwwroot/bin/ffmpeg /home/site/wwwroot/bin/ffprobe;
+
       - name: Verify FFmpeg Installation
         run: |
-          az webapp ssh --name flasktranslatorapp --resource-group MyFlaskAppResources --command "/home/site/wwwroot/bin/ffmpeg -version"
+          /home/site/wwwroot/bin/ffmpeg -version
