@@ -20,28 +20,6 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Download and Install FFmpeg in Persisted Location
-        run: |
-            mkdir -p /home/site/wwwroot/ffmpeg
-            cd /home/site/wwwroot/ffmpeg
-            curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-            tar -xf ffmpeg.tar.xz --strip-components=1
-            rm ffmpeg.tar.xz
-            chmod +x ffmpeg
-  
-      - name: Move FFmpeg to Persisted Directory
-        run: |
-            mkdir -p /home/site/wwwroot/bin
-            mv /home/site/wwwroot/ffmpeg/ffmpeg /home/site/wwwroot/bin/
-            mv /home/site/wwwroot/ffmpeg/ffprobe /home/site/wwwroot/bin/
-  
-      - name: Set Execute Permissions
-        run: chmod +x /home/site/wwwroot/bin/ffmpeg /home/site/wwwroot/bin/ffprobe
-    
-      - name: Verify FFmpeg after Deployment
-        run: |
-          /home/site/wwwroot/bin/ffmpeg -version
-
       - name: Create and start virtual environment
         run: |
           python -m venv venv
@@ -84,3 +62,19 @@ jobs:
           app-name: 'flasktranslatorapp'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F3049D58FFEC4DC895CDD83B10FB2929 }}
+
+      - name: Install FFmpeg in Azure Web App
+        run: |
+          az webapp ssh --name flasktranslatorapp --resource-group MyFlaskAppResources --command "
+          cd /home/site/wwwroot;
+          mkdir -p bin;
+          cd bin;
+          curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz;
+          tar -xf ffmpeg.tar.xz --strip-components=1;
+          rm ffmpeg.tar.xz;
+          chmod +x ffmpeg ffprobe;
+          "
+  
+      - name: Verify FFmpeg Installation
+        run: |
+          az webapp ssh --name flasktranslatorapp --resource-group MyFlaskAppResources --command "/home/site/wwwroot/bin/ffmpeg -version"
