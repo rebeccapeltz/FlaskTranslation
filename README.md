@@ -130,3 +130,4 @@ added startup script
 and use 
 git+https://github.com/long-term-support/audioop-lts.git
 in requirements.txt
+need to instal ffmpeg and check for that
