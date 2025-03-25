@@ -22,8 +22,8 @@ jobs:
 
       - name: Download and Install FFmpeg in Persisted Location
         run: |
-            mkdir -p $GITHUB_WORKSPACE/ffmpeg
-            cd $GITHUB_WORKSPACE/ffmpeg
+            mkdir -p /home/site/wwwroot/ffmpeg
+            cd /home/site/wwwroot/ffmpeg
             curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
             tar -xf ffmpeg.tar.xz --strip-components=1
             rm ffmpeg.tar.xz
@@ -31,12 +31,12 @@ jobs:
   
       - name: Move FFmpeg to Persisted Directory
         run: |
-            mkdir -p $GITHUB_WORKSPACE/site/wwwroot/bin
-            mv $GITHUB_WORKSPACE/ffmpeg/ffmpeg $GITHUB_WORKSPACE/site/wwwroot/bin/
-            mv $GITHUB_WORKSPACE/ffmpeg/ffprobe $GITHUB_WORKSPACE/site/wwwroot/bin/
+            mkdir -p /home/site/wwwroot/bin
+            mv /home/site/wwwroot/ffmpeg/ffmpeg /home/site/wwwroot/bin/
+            mv /home/site/wwwroot/ffmpeg/ffprobe /home/site/wwwroot/bin/
   
       - name: Set Execute Permissions
-        run: chmod +x $GITHUB_WORKSPACE/site/wwwroot/bin/ffmpeg $GITHUB_WORKSPACE/site/wwwroot/bin/ffprobe
+        run: chmod +x /home/site/wwwroot/bin/ffmpeg /home/site/wwwroot/bin/ffprobe
     
       - name: Verify FFmpeg after Deployment
         run: |
