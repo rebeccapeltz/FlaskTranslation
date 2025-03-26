@@ -63,6 +63,20 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F3049D58FFEC4DC895CDD83B10FB2929 }}
 
+      - name: Unzip output.tar.gz
+        run: |
+          ssh -o StrictHostKeyChecking=no kudu_ssh_user@flasktranslatorapp.scm.azurewebsites.net << 'EOF'
+            cd /home/site/wwwroot/
+            tar -xzvf output.tar.gz  # Unzip the tar file
+            ls -l  # List the extracted files to verify
+          EOF
+      - name: Install FFmpeg
+        run: |
+          ssh -o StrictHostKeyChecking=no kudu_ssh_user@flasktranslatorapp.scm.azurewebsites.net << 'EOF'
+            cd /home/site/wwwroot
+            chmod +x install_ffmpeg.sh
+            ./install_ffmpeg.sh  # Run the script to install FFmpeg
+          EOF
       # - name: Upload FFmpeg installation script
       #   run: |
       #       echo 'uploading install_ffmpeg.sh script to the App Service...'
