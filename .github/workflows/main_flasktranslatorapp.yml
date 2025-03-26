@@ -68,11 +68,11 @@ jobs:
       #     echo "Unzipping output.tar.gz to /home/site/wwwroot"
       #     tar -xzf /home/site/wwwroot/output.tar.gz -C /home/site/wwwroot/
 
-      # - name: Set PATH for FFmpeg
-      #   run: |
-      #     echo "Adding /home/site/wwwroot to PATH"
-      #     echo "export PATH=\$PATH:/home/site/wwwroot" >> ~/.bashrc
-      #     source ~/.bashrc
+      - name: Set PATH for FFmpeg
+        run: |
+          echo "Adding /home/site/wwwroot/bin/ffmpeg-git-20240629-amd64-static to PATH"
+          echo "export PATH=\$PATH:/home/site/wwwroot/bin/ffmpeg-git-20240629-amd64-static" >> ~/.bashrc
+          source ~/.bashrc
     
       - name: Verify FFmpeg installation
         run: |
