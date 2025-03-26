@@ -63,19 +63,14 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F3049D58FFEC4DC895CDD83B10FB2929 }}
 
-      - name: Install FFmpeg in Azure Web App
+      - name: Install FFmpeg in Azure Web App via Kudu SSH
         run: |
-          ssh -T -o StrictHostKeyChecking=no kudu_ssh_user@flasktranslatorapp-bvepdbcvgmh7ffek.westus2-01.azurewebsites.net << 'EOF'
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          ls -l /usr/bin/ffmpeg  # Verify installation
-          EOF
-
-          # sudo apt-get update;
-          # sudo apt-get install -y ffmpeg;
-          # ls -l /usr/bin/ffmpeg;  # List the ffmpeg binary to verify installation
+            ssh -T -o StrictHostKeyChecking=no kudu_ssh_user@flasktranslatorapp-bvepdbcvgmh7ffek.scm.azurewebsites.net << 'EOF'
+              sudo apt-get update
+              sudo apt-get install -y ffmpeg
+              ls -l /usr/bin/ffmpeg  # Verify installation
+            EOF
 
       - name: Verify FFmpeg Installation
         run: 
           ssh azureuser@flasktranslatorapp.scm.azurewebsites.net "ffmpeg -version"|
-          # ffmpeg -version
