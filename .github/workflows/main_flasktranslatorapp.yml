@@ -76,7 +76,7 @@ jobs:
     
       - name: Verify FFmpeg installation
         run: |
-          ffmpeg --version
+          ffmpeg -version
 
       # - name: Install FFmpeg
       #   run: |
